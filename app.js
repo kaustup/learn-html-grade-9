@@ -112,7 +112,7 @@ function showScreen(id){
 /* ────────────────────────────────────────────
    GAME STATE
 ──────────────────────────────────────────── */
-const S = {
+const GS = {
   name:    localStorage.getItem('sa_name') || 'Cadet',
   xp:      parseInt(localStorage.getItem('sa_xp') || '0'),
   cleared: JSON.parse(localStorage.getItem('sa_cleared') || '[]'), // level ids beaten
@@ -154,15 +154,15 @@ const S = {
 };
 
 function refreshHearts(){
-  const h = '❤️'.repeat(S.lives) + '🖤'.repeat(Math.max(0,3-S.lives));
+  const h = '❤️'.repeat(GS.lives) + '🖤'.repeat(Math.max(0,3-GS.lives));
   document.querySelectorAll('.tb-hearts, #mapHearts').forEach(el=>el.textContent = h);
 }
 function refreshMapXP(){
-  const pct = Math.min(100, (S.xp/1000)*100);
+  const pct = Math.min(100, (GS.xp/1000)*100);
   const fill = document.getElementById('mapXpFill');
   const lbl  = document.getElementById('mapXpLabel');
   if(fill) fill.style.width = pct + '%';
-  if(lbl)  lbl.textContent  = S.xp + ' XP';
+  if(lbl)  lbl.textContent  = GS.xp + ' XP';
 }
 
 /* ────────────────────────────────────────────
@@ -1095,8 +1095,8 @@ const Game = {
   /* ── launch ── */
   launch(){
     const nm = (document.getElementById('nameInput').value.trim()) || 'Cadet';
-    S.name = nm;
-    S.save();
+    GS.name = nm;
+    GS.save();
     SFX.click();
     showScreen('s-map');
     this.buildMap();
@@ -1126,9 +1126,9 @@ const Game = {
         scroll.appendChild(cssDiv);
       }
 
-      const cleared  = S.isCleared(lv.id);
-      const locked   = idx > 0 && !S.isCleared(LEVELS[idx-1].id);
-      const stars    = S.stars[lv.id] || 0;
+      const cleared  = GS.isCleared(lv.id);
+      const locked   = idx > 0 && !GS.isCleared(LEVELS[idx-1].id);
+      const stars    = GS.stars[lv.id] || 0;
       const starStr  = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
 
       const card = document.createElement('div');
@@ -1150,8 +1150,8 @@ const Game = {
     });
 
     // Final boss button
-    const allHtmlDone = LEVELS.filter(l=>l.type==='html').every(l=>S.isCleared(l.id));
-    const allCssDone  = LEVELS.filter(l=>l.type==='css').every(l=>S.isCleared(l.id));
+    const allHtmlDone = LEVELS.filter(l=>l.type==='html').every(l=>GS.isCleared(l.id));
+    const allCssDone  = LEVELS.filter(l=>l.type==='css').every(l=>GS.isCleared(l.id));
     const fbBtn = document.getElementById('btnFinalBoss');
     if(allHtmlDone && allCssDone){
       fbBtn.disabled = false;
@@ -1162,7 +1162,7 @@ const Game = {
 
   goMap(){
     stopTimer();
-    S.resetLives();
+    GS.resetLives();
     showScreen('s-map');
     this.buildMap();
     refreshMapXP();
@@ -1170,9 +1170,9 @@ const Game = {
 
   /* ── start level (study phase) ── */
   startLevel(lv){
-    S.currentLevel = lv;
-    S.topicIndex = 0;
-    S.resetLives();
+    GS.currentLevel = lv;
+    GS.topicIndex = 0;
+    GS.resetLives();
     document.getElementById('studyLevelName').textContent = `LV${lv.num}: ${lv.title}`;
     document.getElementById(`studyLevelName`).style.color = lv.type==='html' ? 'var(--html)' : 'var(--css)';
     this.loadTopic(0);
@@ -1180,9 +1180,9 @@ const Game = {
   },
 
   loadTopic(idx){
-    const lv     = S.currentLevel;
+    const lv     = GS.currentLevel;
     const topics = lv.topics;
-    S.topicIndex = idx;
+    GS.topicIndex = idx;
 
     const pct = ((idx+1)/topics.length)*100;
     document.getElementById('studyProgress').style.width = pct+'%';
@@ -1211,21 +1211,21 @@ const Game = {
     refreshHearts();
   },
 
-  prevTopic(){ if(S.topicIndex > 0) this.loadTopic(S.topicIndex-1); },
+  prevTopic(){ if(GS.topicIndex > 0) this.loadTopic(GS.topicIndex-1); },
   nextTopic(){
-    const lv = S.currentLevel;
-    if(S.topicIndex < lv.topics.length - 1) this.loadTopic(S.topicIndex+1);
+    const lv = GS.currentLevel;
+    if(GS.topicIndex < lv.topics.length - 1) this.loadTopic(GS.topicIndex+1);
     else this.startQuiz();
   },
 
   /* ── quiz phase ── */
   startQuiz(){
-    const lv = S.currentLevel;
-    S.quizScore = 0;
-    S.quizQ = 0;
-    S.streak = 0;
+    const lv = GS.currentLevel;
+    GS.quizScore = 0;
+    GS.quizQ = 0;
+    GS.streak = 0;
     // shuffle quiz questions
-    S.quizPool = [...lv.quiz].sort(()=>Math.random()-0.5);
+    GS.quizPool = [...lv.quiz].sort(()=>Math.random()-0.5);
 
     document.getElementById('quizLevelName').textContent = `LV${lv.num}: ${lv.title}`;
     document.getElementById('quizLevelName').style.color = lv.type==='html'?'var(--html)':'var(--css)';
@@ -1235,13 +1235,13 @@ const Game = {
   },
 
   showQuestion(){
-    const lv = S.currentLevel;
-    const q  = S.quizPool[S.quizQ];
-    const total = S.quizPool.length;
+    const lv = GS.currentLevel;
+    const q  = GS.quizPool[GS.quizQ];
+    const total = GS.quizPool.length;
 
-    document.getElementById('quizQNum').textContent   = `${S.quizQ+1}/${total}`;
-    document.getElementById('quizScore').textContent  = S.quizScore;
-    document.getElementById('quizStreak').textContent = `🔥 x${S.streak}`;
+    document.getElementById('quizQNum').textContent   = `${GS.quizQ+1}/${total}`;
+    document.getElementById('quizScore').textContent  = GS.quizScore;
+    document.getElementById('quizStreak').textContent = `🔥 x${GS.streak}`;
     document.getElementById('quizTime').textContent   = '20';
     document.getElementById('quizTimerBar').style.width = '100%';
     document.getElementById('quizTimerBar').style.transition = 'none';
@@ -1258,7 +1258,7 @@ const Game = {
         </div>
         <div class="q-explain" id="qExplain"></div>
         <button class="q-next" id="qNext" onclick="Game.nextQuestion()">
-          ${S.quizQ < total-1 ? 'Next ›' : '⚔️ BOSS FIGHT!'}
+          ${GS.quizQ < total-1 ? 'Next ›' : '⚔️ BOSS FIGHT!'}
         </button>
       </div>
     `;
@@ -1287,14 +1287,14 @@ const Game = {
     document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
     if(correct){
       btn.classList.add('correct');
-      S.streak++;
-      const bonus = S.streak >= 3 ? 20 : 10;
-      S.quizScore += bonus;
-      S.addXP(bonus);
-      document.getElementById('quizScore').textContent = S.quizScore;
-      document.getElementById('quizStreak').textContent = `🔥 x${S.streak}`;
+      GS.streak++;
+      const bonus = GS.streak >= 3 ? 20 : 10;
+      GS.quizScore += bonus;
+      GS.addXP(bonus);
+      document.getElementById('quizScore').textContent = GS.quizScore;
+      document.getElementById('quizStreak').textContent = `🔥 x${GS.streak}`;
       SFX.correct();
-      if(S.streak === 3) toast(`🔥 3 STREAK! Bonus XP!`,'good');
+      if(GS.streak === 3) toast(`🔥 3 STREAK! Bonus XP!`,'good');
       else toast('✅ Correct!','good');
     } else {
       btn.classList.add('wrong');
@@ -1306,12 +1306,12 @@ const Game = {
   },
 
   _handleWrong(){
-    S.streak = 0;
+    GS.streak = 0;
     document.getElementById('quizStreak').textContent = `🔥 x0`;
-    if(S.loseLife()){
+    if(GS.loseLife()){
       setTimeout(()=>this.gameOver('No lives left! 💔'), 800);
     } else {
-      toast(`💔 Wrong! ${S.lives} lives left`,'bad');
+      toast(`💔 Wrong! ${GS.lives} lives left`,'bad');
     }
   },
 
@@ -1321,8 +1321,8 @@ const Game = {
   },
 
   nextQuestion(){
-    S.quizQ++;
-    if(S.quizQ >= S.quizPool.length){
+    GS.quizQ++;
+    if(GS.quizQ >= GS.quizPool.length){
       this.startBoss();
     } else {
       this.showQuestion();
@@ -1331,7 +1331,7 @@ const Game = {
 
   /* ── mini boss ── */
   startBoss(){
-    const lv = S.currentLevel;
+    const lv = GS.currentLevel;
     const b  = lv.boss;
     stopTimer();
     SFX.boss();
@@ -1371,7 +1371,7 @@ const Game = {
 
   runBossCode(){
     const code    = document.getElementById('codeEditor').value.trim();
-    const lv      = S.currentLevel;
+    const lv      = GS.currentLevel;
     const checks  = lv.boss.checks;
     const result  = document.getElementById('bossResult');
     const hpBar   = document.getElementById('bossHpBar');
@@ -1401,11 +1401,11 @@ const Game = {
       confetti(50);
 
       // calculate stars by quiz score
-      const maxQ = S.quizPool.length * 20;
-      const stars = S.quizScore >= maxQ*0.9 ? 3 : S.quizScore >= maxQ*0.6 ? 2 : 1;
-      S.clearLevel(lv.id, stars);
+      const maxQ = GS.quizPool.length * 20;
+      const stars = GS.quizScore >= maxQ*0.9 ? 3 : GS.quizScore >= maxQ*0.6 ? 2 : 1;
+      GS.clearLevel(lv.id, stars);
       const xpEarned = passed * 10 + stars * 20;
-      S.addXP(xpEarned);
+      GS.addXP(xpEarned);
 
       setTimeout(()=> this.showLevelComplete(stars, xpEarned), 1200);
     } else {
@@ -1416,23 +1416,23 @@ const Game = {
       `;
       result.style.display = 'block';
       SFX.wrong();
-      if(S.loseLife()){
+      if(GS.loseLife()){
         setTimeout(()=> this.gameOver('Boss defeated you! 💀'), 1000);
       } else {
-        toast(`💔 ${S.lives} lives left. Fix your code!`,'bad');
+        toast(`💔 ${GS.lives} lives left. Fix your code!`,'bad');
       }
     }
   },
 
   /* ── level complete ── */
   showLevelComplete(stars, xpEarned){
-    const lv = S.currentLevel;
+    const lv = GS.currentLevel;
     const idx = LEVELS.indexOf(lv);
 
     document.getElementById('levelupIcon').textContent = lv.type==='html' ? '🌐' : '🎨';
     document.getElementById('levelupTitle').textContent = `${lv.title.toUpperCase()} CLEARED!`;
     document.getElementById('levelupStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
-    document.getElementById('levelupScore').textContent = `Quiz Score: ${S.quizScore} pts`;
+    document.getElementById('levelupScore').textContent = `Quiz Score: ${GS.quizScore} pts`;
     document.getElementById('levelupXP').textContent    = `+${xpEarned} XP earned!`;
 
     const nextLv = LEVELS[idx+1];
@@ -1448,7 +1448,7 @@ const Game = {
   },
 
   goNextLevel(){
-    const lv  = S.currentLevel;
+    const lv  = GS.currentLevel;
     const idx = LEVELS.indexOf(lv);
     const next = LEVELS[idx+1];
     if(next) this.startLevel(next);
@@ -1464,14 +1464,14 @@ const Game = {
   },
 
   retryLevel(){
-    if(S.currentLevel) this.startLevel(S.currentLevel);
+    if(GS.currentLevel) this.startLevel(GS.currentLevel);
     else this.goMap();
   },
 
   /* ── final boss ── */
   startFinalBoss(){
     SFX.boss();
-    S.resetLives();
+    GS.resetLives();
 
     // build checklist
     const grid = document.getElementById('checklistGrid');
@@ -1538,12 +1538,12 @@ const Game = {
       result.style.display = 'block';
       SFX.victory();
       confetti(100);
-      S.addXP(200);
+      GS.addXP(200);
 
       const stats = document.getElementById('victoryStats');
       stats.innerHTML = `
-        Total XP: <span>${S.xp}</span><br/>
-        Levels Cleared: <span>${S.cleared.length} / ${LEVELS.length}</span><br/>
+        Total XP: <span>${GS.xp}</span><br/>
+        Levels Cleared: <span>${GS.cleared.length} / ${LEVELS.length}</span><br/>
         Final Boss: <span>DEFEATED ✅</span>
       `;
       setTimeout(()=> showScreen('s-victory'), 2000);
@@ -1556,10 +1556,10 @@ const Game = {
       `;
       result.style.display = 'block';
       SFX.wrong();
-      if(S.loseLife()){
+      if(GS.loseLife()){
         setTimeout(()=> this.gameOver('Final Boss was too strong! 💀'), 1000);
       } else {
-        toast(`💔 ${S.lives} lives left. Add more tags!`,'bad');
+        toast(`💔 ${GS.lives} lives left. Add more tags!`,'bad');
       }
     }
   },
