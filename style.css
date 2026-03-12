@@ -95,8 +95,9 @@ textarea{resize:vertical}
   display:none;
   flex-direction:column;
   overflow-y:auto;overflow-x:hidden;
+  pointer-events:none;
 }
-.screen.active{display:flex}
+.screen.active{display:flex;pointer-events:all;z-index:20;}
 
 /* ════════════════════════════════════════════
    SCREEN 0 — SPLASH
