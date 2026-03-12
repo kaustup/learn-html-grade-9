@@ -227,7 +227,69 @@
       <h1 class="victory-title">YOU WIN!</h1>
       <p class="victory-sub">Galactic Overlord DEFEATED!</p>
       <div class="victory-stats" id="victoryStats"></div>
-      <button class="btn-launch" onclick="Game.goMap()">🗺️ GALAXY MAP</button>
+      <button class="btn-bonus-unlock" onclick="Game.startBonus()">🌟 BONUS LEVEL UNLOCKED!</button>
+      <button class="btn-map-return" style="margin-top:0.5rem;width:100%" onclick="Game.goMap()">🗺️ GALAXY MAP</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 9 — BONUS LEVEL -->
+  <div id="s-bonus" class="screen">
+    <div class="game-topbar">
+      <button class="tb-back" onclick="Game.goMap()">← MAP</button>
+      <div class="tb-center">
+        <span class="tb-level-name" style="color:var(--gold)">🌟 BONUS — Online Registration Form</span>
+      </div>
+      <div class="tb-hearts" id="bonusHearts">❤️❤️❤️</div>
+    </div>
+
+    <div class="bonus-area">
+
+      <div class="bonus-ref-card">
+        <div class="bonus-ref-label">📸 RECREATE THIS FORM:</div>
+        <div class="bonus-form-preview">
+          <div class="bfp-title">Online Registration Form!</div>
+          <div class="bfp-subtitle">Registration Form</div>
+          <table class="bfp-table">
+            <tr><td class="bfp-lbl">First Name</td><td><input class="bfp-input" placeholder="First Name Here" disabled/></td></tr>
+            <tr><td class="bfp-lbl">Last Name</td><td><div style="display:flex;gap:4px"><input class="bfp-input" placeholder="Last Name Here" style="flex:1" disabled/><select class="bfp-sel" disabled><option>Student ▼</option></select></div></td></tr>
+            <tr><td class="bfp-lbl">Occupation</td><td><input class="bfp-input" placeholder="Student" disabled/></td></tr>
+            <tr><td class="bfp-lbl">Gender</td><td><label><input type="radio" disabled/> Male</label> &nbsp; <label><input type="radio" disabled/> Female</label></td></tr>
+            <tr><td class="bfp-lbl">Education</td><td><label><input type="checkbox" disabled/> High School</label> <label><input type="checkbox" disabled/> Graduate</label> <label><input type="checkbox" disabled/> Some College</label></td></tr>
+            <tr><td class="bfp-lbl">Upload Your Photo</td><td><input type="file" disabled/></td></tr>
+            <tr><td class="bfp-lbl" style="vertical-align:top">Write about yourself<br/><small>(not more than 200 words)</small></td><td><textarea class="bfp-ta" placeholder="Write here ..." disabled></textarea></td></tr>
+          </table>
+          <div style="text-align:center;margin-top:8px"><button class="bfp-btn" disabled>Submit</button></div>
+        </div>
+      </div>
+
+      <div class="bonus-instructions">
+        <div class="bonus-inst-title">📋 REQUIREMENTS — check all to win:</div>
+        <div class="bonus-checklist-grid" id="bonusChecklistGrid"></div>
+      </div>
+
+      <div class="bonus-editors">
+        <div class="editor-wrap">
+          <div class="editor-topbar">
+            <span class="editor-file">📄 form.html</span>
+            <span class="bonus-editor-hint">Your HTML form</span>
+          </div>
+          <div class="editor-gutter" id="bonusHtmlGutter"></div>
+          <textarea id="bonusHtmlEditor" class="code-editor" style="height:260px" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="Write your HTML here..."></textarea>
+        </div>
+
+        <div class="editor-wrap" style="border-color:rgba(0,229,192,0.3)">
+          <div class="editor-topbar">
+            <span class="editor-file" style="color:var(--css)">🎨 style.css</span>
+            <span class="bonus-editor-hint">External CSS (required!)</span>
+          </div>
+          <div class="editor-gutter" id="bonusCssGutter"></div>
+          <textarea id="bonusCssEditor" class="code-editor" style="height:200px" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="Write your CSS here..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn-bonus-submit" onclick="Game.runBonus()">▶ SUBMIT &amp; CHECK</button>
+      <div class="boss-result" id="bonusResult" style="margin:0 0 2rem"></div>
+
     </div>
   </div>
 
