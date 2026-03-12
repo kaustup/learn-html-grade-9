@@ -1,134 +1,234 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
   <title>WebDev Space Academy 🚀</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  <canvas id="bgCanvas"></canvas>
 
-  <canvas id="starCanvas"></canvas>
+  <!-- ── AUDIO (browser beeps, no files) ── -->
+  <div id="sfxLayer" aria-hidden="true"></div>
+
+  <!-- ══════════════ TOAST ══════════════ -->
   <div id="toast" class="toast"></div>
 
-  <!-- ══════════════════ SCREEN: HOME ══════════════════ -->
-  <div id="screen-home" class="screen active">
-    <div class="home-wrap">
+  <!-- ══════════════ FLOATING XP POPUP ══════════════ -->
+  <div id="xpPop" class="xp-pop"></div>
 
-      <div class="home-header">
-        <div class="rocket-anim">🚀</div>
-        <h1 class="game-title">WebDev<br/><span class="title-glow">Space Academy</span></h1>
-        <p class="game-sub">Grade 9 · HTML &amp; CSS Galactic Guide</p>
+  <!-- ══════════════════════════════════════
+       SCREEN 0 — SPLASH / ENTER NAME
+  ══════════════════════════════════════ -->
+  <div id="s-splash" class="screen active">
+    <div class="splash-wrap">
+      <div class="splash-rocket">🚀</div>
+      <h1 class="splash-title">WebDev<br/><span>Space Academy</span></h1>
+      <p class="splash-sub">Grade 9 · HTML &amp; CSS · Arcade Edition</p>
+      <div class="name-box">
+        <label class="name-label">Enter your callsign, cadet:</label>
+        <input id="nameInput" class="name-input" type="text" maxlength="16" placeholder="e.g. Kaustup" autocomplete="off"/>
       </div>
+      <button class="btn-launch" onclick="Game.launch()">🚀 LAUNCH MISSION</button>
+      <p class="splash-credit">Based on W3Schools &amp; Class 9 CS Book</p>
+    </div>
+  </div>
 
-      <div class="xp-panel">
-        <div class="xp-row">
-          <span class="xp-lbl">⚡ XP</span>
-          <span id="homeXP" class="xp-number">0</span>
-          <span class="xp-lbl">/ 500</span>
+  <!-- ══════════════════════════════════════
+       SCREEN 1 — GALAXY MAP (level select)
+  ══════════════════════════════════════ -->
+  <div id="s-map" class="screen">
+    <div class="map-topbar">
+      <div class="map-player" id="mapPlayer">Cadet</div>
+      <div class="map-xp-wrap">
+        <div class="map-xp-bar"><div id="mapXpFill" class="map-xp-fill"></div></div>
+        <div id="mapXpLabel" class="map-xp-label">0 XP</div>
+      </div>
+      <div class="map-hearts" id="mapHearts">❤️❤️❤️</div>
+    </div>
+
+    <div class="map-title-row">
+      <h2 class="map-heading">⭐ GALAXY MAP</h2>
+      <button class="btn-final-boss" id="btnFinalBoss" onclick="Game.startFinalBoss()" disabled>
+        🔴 FINAL BOSS
+      </button>
+    </div>
+
+    <div class="level-scroll" id="levelScroll">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 2 — STUDY (topic lesson)
+  ══════════════════════════════════════ -->
+  <div id="s-study" class="screen">
+    <div class="game-topbar">
+      <button class="tb-back" onclick="Game.goMap()">← MAP</button>
+      <div class="tb-center">
+        <span id="studyLevelName" class="tb-level-name"></span>
+        <div class="tb-progress-bar"><div id="studyProgress" class="tb-progress-fill"></div></div>
+      </div>
+      <div class="tb-hearts" id="studyHearts">❤️❤️❤️</div>
+    </div>
+
+    <div class="study-area" id="studyArea">
+      <!-- topic cards injected -->
+    </div>
+
+    <div class="study-footer">
+      <button class="btn-prev-topic" id="btnPrevTopic" onclick="Game.prevTopic()">‹ Prev</button>
+      <span id="studyTopicCounter" class="study-counter"></span>
+      <button class="btn-next-topic" id="btnNextTopic" onclick="Game.nextTopic()">Next ›</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 3 — QUIZ BATTLE
+  ══════════════════════════════════════ -->
+  <div id="s-quiz" class="screen">
+    <div class="game-topbar">
+      <button class="tb-back" onclick="Game.goMap()">← MAP</button>
+      <div class="tb-center">
+        <span id="quizLevelName" class="tb-level-name"></span>
+        <div class="quiz-timer-bar-wrap"><div id="quizTimerBar" class="quiz-timer-bar"></div></div>
+      </div>
+      <div class="tb-hearts" id="quizHearts">❤️❤️❤️</div>
+    </div>
+
+    <div class="hud-row">
+      <div class="hud-item"><span class="hud-lbl">SCORE</span><span id="quizScore" class="hud-val">0</span></div>
+      <div class="hud-item"><span class="hud-lbl">Q</span><span id="quizQNum" class="hud-val">1/5</span></div>
+      <div class="hud-streak" id="quizStreak">🔥 x0</div>
+      <div class="hud-item"><span class="hud-lbl">TIME</span><span id="quizTime" class="hud-val">20</span></div>
+    </div>
+
+    <div class="quiz-area" id="quizArea">
+      <!-- question injected -->
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 4 — MINI BOSS (code editor)
+  ══════════════════════════════════════ -->
+  <div id="s-boss" class="screen">
+    <div class="game-topbar">
+      <button class="tb-back" onclick="Game.goMap()">← MAP</button>
+      <div class="tb-center">
+        <span id="bossLevelName" class="tb-level-name" style="color:var(--red)">⚔️ MINI BOSS</span>
+      </div>
+      <div class="tb-hearts" id="bossHearts">❤️❤️❤️</div>
+    </div>
+
+    <div class="boss-area">
+      <div class="boss-sprite" id="bossSprite">👾</div>
+      <div class="boss-hp-wrap"><div id="bossHpBar" class="boss-hp-bar"></div></div>
+      <p class="boss-hp-label" id="bossHpLabel">BOSS HP: 100%</p>
+
+      <div class="boss-challenge-card">
+        <div class="boss-task-label">📋 MISSION:</div>
+        <div id="bossTask" class="boss-task"></div>
+
+        <div class="boss-hints" id="bossHints"></div>
+
+        <div class="editor-wrap">
+          <div class="editor-topbar">
+            <span class="editor-file">📄 index.html</span>
+            <button class="btn-run" onclick="Game.runBossCode()">▶ RUN &amp; ATTACK</button>
+          </div>
+          <div class="editor-gutter" id="editorGutter"></div>
+          <textarea id="codeEditor" class="code-editor" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="Write your HTML/CSS code here..."></textarea>
         </div>
-        <div class="xp-track"><div class="xp-fill" id="homeXPBar" style="width:0%"></div></div>
-        <div class="level-tag" id="levelTag">🌍 Cadet — Level 1</div>
+
+        <div class="boss-result" id="bossResult"></div>
       </div>
-
-      <div class="mission-list">
-
-        <button class="mission-card html-card" onclick="App.openLesson('html')">
-          <div class="mc-icon">🌐</div>
-          <div class="mc-body">
-            <div class="mc-title">HTML Mission</div>
-            <div class="mc-sub">Tags · Attributes · Forms · Tables · Images</div>
-            <div class="mc-count" id="htmlProgress">0 / 17 topics</div>
-          </div>
-          <div class="mc-arrow">▶</div>
-        </button>
-
-        <button class="mission-card css-card" onclick="App.openLesson('css')">
-          <div class="mc-icon">🎨</div>
-          <div class="mc-body">
-            <div class="mc-title">CSS Mission</div>
-            <div class="mc-sub">Selectors · Properties · Box Model · Units</div>
-            <div class="mc-count" id="cssProgress">0 / 7 topics</div>
-          </div>
-          <div class="mc-arrow">▶</div>
-        </button>
-
-        <button class="mission-card quiz-card" onclick="App.openQuiz()">
-          <div class="mc-icon">🏆</div>
-          <div class="mc-body">
-            <div class="mc-title">Final Boss Quiz</div>
-            <div class="mc-sub">20 Random Questions · Beat the Boss!</div>
-            <div class="mc-count">Earn up to 200 XP</div>
-          </div>
-          <div class="mc-arrow">▶</div>
-        </button>
-
-      </div>
-
-      <p class="credit-text">📚 W3Schools + Class 9 Computer Science Textbook</p>
     </div>
   </div>
 
-
-  <!-- ══════════════════ SCREEN: LESSON ══════════════════ -->
-  <div id="screen-lesson" class="screen">
-
-    <div class="topbar">
-      <button class="tb-back" onclick="App.goHome()">&#8592; Back</button>
-      <h2 class="tb-title" id="lessonTitle">HTML</h2>
-      <button class="tb-quiz" onclick="App.openQuiz()">🏆 Quiz</button>
+  <!-- ══════════════════════════════════════
+       SCREEN 5 — FINAL BOSS
+  ══════════════════════════════════════ -->
+  <div id="s-final" class="screen">
+    <div class="game-topbar">
+      <button class="tb-back" onclick="Game.goMap()">← MAP</button>
+      <div class="tb-center">
+        <span class="tb-level-name" style="color:var(--red);font-size:0.8rem">🔴 FINAL BOSS — GALACTIC OVERLORD</span>
+      </div>
+      <div class="tb-hearts" id="finalHearts">❤️❤️❤️</div>
     </div>
 
-    <!-- mobile topic selector -->
-    <div class="mobile-topic-bar" id="mobileTopicBar">
-      <button class="mtb-arrow" id="mtbPrev" onclick="App.prevTopic()">‹</button>
-      <span class="mtb-label" id="mtbLabel">Topic 1</span>
-      <button class="mtb-arrow" id="mtbNext" onclick="App.nextTopic()">›</button>
-    </div>
+    <div class="final-area">
+      <div class="final-boss-sprite" id="finalSprite">👹</div>
+      <div class="boss-hp-wrap"><div id="finalHpBar" class="boss-hp-bar" style="background:linear-gradient(90deg,var(--red),var(--pink))"></div></div>
 
-    <div class="lesson-layout">
-      <nav class="sidebar" id="sidebar">
-        <div class="sb-head">📋 TOPICS</div>
-        <div id="topicList"></div>
-      </nav>
-      <main class="content-pane" id="contentPane">
-        <!-- injected by JS -->
-      </main>
-    </div>
+      <div class="final-task-card">
+        <div class="boss-task-label" style="color:var(--red)">🔴 FINAL MISSION:</div>
+        <div class="boss-task">Build a <strong>complete HTML webpage</strong> about your school using at least <strong>10 different HTML tags</strong>. Include: headings, paragraphs, a list, a table, a form, an image tag, a link, and more!</div>
 
-  </div>
+        <div class="checklist-grid" id="checklistGrid">
+          <!-- injected by JS -->
+        </div>
 
+        <div class="editor-wrap">
+          <div class="editor-topbar">
+            <span class="editor-file">📄 school.html</span>
+            <button class="btn-run" style="background:linear-gradient(135deg,var(--red),var(--pink))" onclick="Game.runFinalBoss()">▶ CHECK MY CODE</button>
+          </div>
+          <div class="editor-gutter" id="finalGutter"></div>
+          <textarea id="finalEditor" class="code-editor" spellcheck="false" autocorrect="off" autocapitalize="off" style="height:320px" placeholder="Write your full HTML page here..."></textarea>
+        </div>
 
-  <!-- ══════════════════ SCREEN: QUIZ ══════════════════ -->
-  <div id="screen-quiz" class="screen">
-
-    <div class="topbar">
-      <button class="tb-back" onclick="App.goHome()">&#8592; Home</button>
-      <h2 class="tb-title gold">🏆 Final Boss</h2>
-      <div class="tb-counter" id="quizCounter">1 / 20</div>
-    </div>
-
-    <!-- progress bar -->
-    <div class="quiz-prog-wrap">
-      <div class="quiz-prog-fill" id="quizProgFill" style="width:5%"></div>
-    </div>
-
-    <div class="quiz-area" id="quizArea"></div>
-
-    <div class="score-screen hidden" id="scoreScreen">
-      <div class="ss-rocket">🚀</div>
-      <div class="ss-score" id="ssScore"></div>
-      <div class="ss-msg"   id="ssMsg"></div>
-      <div class="ss-xp"    id="ssXP"></div>
-      <div class="ss-btns">
-        <button class="ss-btn-home"  onclick="App.goHome()">🏠 Home</button>
-        <button class="ss-btn-retry" onclick="App.openQuiz()">🔄 Retry</button>
+        <div class="boss-result" id="finalResult"></div>
       </div>
     </div>
+  </div>
 
+  <!-- ══════════════════════════════════════
+       SCREEN 6 — LEVEL COMPLETE
+  ══════════════════════════════════════ -->
+  <div id="s-levelup" class="screen">
+    <div class="levelup-wrap">
+      <div class="levelup-icon" id="levelupIcon">🏆</div>
+      <h2 class="levelup-title" id="levelupTitle">LEVEL COMPLETE!</h2>
+      <div class="levelup-stars" id="levelupStars"></div>
+      <div class="levelup-score" id="levelupScore"></div>
+      <div class="levelup-xp" id="levelupXP"></div>
+      <div class="levelup-btns">
+        <button class="btn-map-return" onclick="Game.goMap()">🗺️ GALAXY MAP</button>
+        <button class="btn-next-level" id="btnNextLevel" onclick="Game.goNextLevel()">NEXT LEVEL ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 7 — GAME OVER
+  ══════════════════════════════════════ -->
+  <div id="s-gameover" class="screen">
+    <div class="gameover-wrap">
+      <div class="gameover-icon">💀</div>
+      <h2 class="gameover-title">GAME OVER</h2>
+      <p id="gameoverMsg" class="gameover-msg"></p>
+      <div class="gameover-btns">
+        <button class="btn-retry" onclick="Game.retryLevel()">🔄 RETRY</button>
+        <button class="btn-map-return" onclick="Game.goMap()">🗺️ MAP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 8 — VICTORY
+  ══════════════════════════════════════ -->
+  <div id="s-victory" class="screen">
+    <div class="victory-wrap">
+      <div class="victory-icon">🏆</div>
+      <h1 class="victory-title">YOU WIN!</h1>
+      <p class="victory-sub">Galactic Overlord DEFEATED!</p>
+      <div class="victory-stats" id="victoryStats"></div>
+      <button class="btn-launch" onclick="Game.goMap()">🗺️ GALAXY MAP</button>
+    </div>
   </div>
 
   <script src="app.js"></script>
