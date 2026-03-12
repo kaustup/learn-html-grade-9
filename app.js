@@ -269,14 +269,19 @@ const LEVELS = [
     ],
     boss:{
       emoji:'👾',
-      task:'Write a basic HTML page with the correct structure. It must have: DOCTYPE declaration, html tag, head with a title tag, and a body with one h1 heading.',
-      hints:['Start with &lt;!DOCTYPE html&gt;','Then &lt;html&gt;, &lt;head&gt;, &lt;body&gt;','Put &lt;title&gt; inside &lt;head&gt;','Put &lt;h1&gt; inside &lt;body&gt;'],
+      task:'Type this exact code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;My First Page&lt;/title&gt;\n  &lt;/head&gt;\n  &lt;body&gt;\n    &lt;h1&gt;Hello World&lt;/h1&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>Write exactly this — the text inside &lt;title&gt; must be <b>My First Page</b> and inside &lt;h1&gt; must be <b>Hello World</b>.',
+      hints:[
+        'Line 1: &lt;!DOCTYPE html&gt;',
+        'Wrap everything in &lt;html&gt;...&lt;/html&gt;',
+        '&lt;title&gt;My First Page&lt;/title&gt; goes inside &lt;head&gt;',
+        '&lt;h1&gt;Hello World&lt;/h1&gt; goes inside &lt;body&gt;',
+      ],
       checks:[
-        { label:'DOCTYPE declared',  test: c => /<!DOCTYPE\s+html>/i.test(c) },
-        { label:'<html> tag',        test: c => /<html[\s>]/i.test(c) && /<\/html>/i.test(c) },
-        { label:'<head> with title', test: c => /<head[\s>]/i.test(c) && /<title>[\s\S]+<\/title>/i.test(c) },
-        { label:'<body> tag',        test: c => /<body[\s>]/i.test(c) && /<\/body>/i.test(c) },
-        { label:'<h1> heading',      test: c => /<h1[\s>]/i.test(c) && /<\/h1>/i.test(c) },
+        { label:'&lt;!DOCTYPE html&gt; present',      test: c => /<!DOCTYPE\s+html>/i.test(c) },
+        { label:'&lt;html&gt; and &lt;/html&gt;',     test: c => /<html[\s>]/i.test(c) && /<\/html>/i.test(c) },
+        { label:'&lt;title&gt;My First Page&lt;/title&gt;', test: c => /<title>\s*My First Page\s*<\/title>/i.test(c) },
+        { label:'&lt;body&gt; and &lt;/body&gt;',     test: c => /<body[\s>]/i.test(c) && /<\/body>/i.test(c) },
+        { label:'&lt;h1&gt;Hello World&lt;/h1&gt;',  test: c => /<h1[^>]*>\s*Hello World\s*<\/h1>/i.test(c) },
       ]
     }
   },
@@ -367,13 +372,20 @@ x<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;</span>     <spa
     ],
     boss:{
       emoji:'👾',
-      task:'Write HTML that shows: a centred h1 heading with your name, a paragraph below it, a horizontal rule, and text showing the water formula H₂O using the correct subscript tag.',
-      hints:['Use &lt;h1 align="center"&gt;','&lt;p&gt; for paragraph','&lt;hr&gt; for the line','H&lt;sub&gt;2&lt;/sub&gt;O for water formula'],
+      task:'Type this exact code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Text Page&lt;/title&gt;\n  &lt;/head&gt;\n  &lt;body&gt;\n    &lt;h1 align="center"&gt;I Am A Coder&lt;/h1&gt;\n    &lt;p&gt;Die Boss!&lt;/p&gt;\n    &lt;hr&gt;\n    &lt;p&gt;Water formula: H&lt;sub&gt;2&lt;/sub&gt;O&lt;/p&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>Every tag must match exactly — including the text inside them.',
+      hints:[
+        'Must have full boilerplate: DOCTYPE, html, head, title, body',
+        '&lt;h1 align="center"&gt;I Am A Coder&lt;/h1&gt;',
+        '&lt;p&gt;Die Boss!&lt;/p&gt; then &lt;hr&gt;',
+        'H&lt;sub&gt;2&lt;/sub&gt;O — sub goes around the 2 only',
+      ],
       checks:[
-        { label:'&lt;h1&gt; with align', test: c => /<h1[^>]*align/i.test(c) },
-        { label:'&lt;p&gt; paragraph',   test: c => /<p[\s>]/i.test(c) },
-        { label:'&lt;hr&gt; line',       test: c => /<hr[\s/>]/i.test(c) },
-        { label:'&lt;sub&gt; for H₂O',  test: c => /<sub>/i.test(c) },
+        { label:'Full boilerplate present',            test: c => /<!DOCTYPE\s+html>/i.test(c) && /<body/i.test(c) },
+        { label:'&lt;h1 align="center"&gt;',           test: c => /<h1[^>]*align\s*=\s*["']center["']/i.test(c) },
+        { label:'&lt;h1&gt; says I Am A Coder',        test: c => /<h1[^>]*>\s*I Am A Coder\s*<\/h1>/i.test(c) },
+        { label:'&lt;p&gt;Die Boss!&lt;/p&gt;',        test: c => /<p[^>]*>\s*Die Boss!\s*<\/p>/i.test(c) },
+        { label:'&lt;hr&gt; horizontal line',           test: c => /<hr[\s/>]/i.test(c) },
+        { label:'H&lt;sub&gt;2&lt;/sub&gt;O present',  test: c => /H<sub>2<\/sub>O/i.test(c) },
       ]
     }
   },
@@ -456,14 +468,21 @@ x<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;</span>     <spa
     ],
     boss:{
       emoji:'👾',
-      task:'Write HTML with: a body that has a yellow background, a red h1 heading using the font color attribute, and a marquee that bounces with scrollamount of 3.',
-      hints:['&lt;body bgcolor="yellow"&gt;','&lt;font color="red"&gt;heading&lt;/font&gt;','&lt;marquee behavior="bounce" scrollamount="3"&gt;'],
+      task:'Type this exact code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Colours Page&lt;/title&gt;\n  &lt;/head&gt;\n  &lt;body bgcolor="yellow"&gt;\n    &lt;font color="red"&gt;&lt;h1&gt;Welcome To My Page&lt;/h1&gt;&lt;/font&gt;\n    &lt;marquee behavior="bounce" scrollamount="3"&gt;I Am Bouncing!&lt;/marquee&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>Match every tag, attribute, and the text exactly.',
+      hints:[
+        'Full boilerplate: DOCTYPE, html, head, title, body',
+        '&lt;body bgcolor="yellow"&gt; — bgcolor on the body tag',
+        '&lt;font color="red"&gt;&lt;h1&gt;Welcome To My Page&lt;/h1&gt;&lt;/font&gt;',
+        '&lt;marquee behavior="bounce" scrollamount="3"&gt;I Am Bouncing!&lt;/marquee&gt;',
+      ],
       checks:[
-        { label:'bgcolor on body',     test: c => /<body[^>]*bgcolor/i.test(c) },
-        { label:'font color attribute', test: c => /<font[^>]*color/i.test(c) },
-        { label:'&lt;marquee&gt; tag', test: c => /<marquee/i.test(c) },
-        { label:'behavior=bounce',      test: c => /behavior\s*=\s*["']bounce["']/i.test(c) },
-        { label:'scrollamount set',     test: c => /scrollamount/i.test(c) },
+        { label:'Full boilerplate present',              test: c => /<!DOCTYPE\s+html>/i.test(c) && /<body/i.test(c) },
+        { label:'&lt;body bgcolor="yellow"&gt;',         test: c => /<body[^>]*bgcolor\s*=\s*["']yellow["']/i.test(c) },
+        { label:'&lt;font color="red"&gt;',              test: c => /<font[^>]*color\s*=\s*["']red["']/i.test(c) },
+        { label:'&lt;h1&gt;Welcome To My Page&lt;/h1&gt;', test: c => /<h1[^>]*>\s*Welcome To My Page\s*<\/h1>/i.test(c) },
+        { label:'&lt;marquee behavior="bounce"&gt;',     test: c => /<marquee[^>]*behavior\s*=\s*["']bounce["']/i.test(c) },
+        { label:'scrollamount="3"',                      test: c => /scrollamount\s*=\s*["']3["']/i.test(c) },
+        { label:'&lt;marquee&gt; says I Am Bouncing!',  test: c => /I Am Bouncing!/i.test(c) },
       ]
     }
   },
@@ -545,14 +564,21 @@ x<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;</span>     <spa
     ],
     boss:{
       emoji:'👾',
-      task:'Write HTML with: an image tag (any src, with alt text, width 200), and two links — one opening google.com in a new tab, and one email link.',
-      hints:['&lt;img src="..." alt="..." width="200"&gt;','&lt;a href="https://google.com" target="_blank"&gt;','&lt;a href="mailto:your@email.com"&gt;'],
+      task:'Type this exact code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Links and Images&lt;/title&gt;\n  &lt;/head&gt;\n  &lt;body&gt;\n    &lt;h1&gt;My Links Page&lt;/h1&gt;\n    &lt;img src="photo.jpg" alt="My Photo" width="200"&gt;\n    &lt;p&gt;&lt;a href="https://google.com" target="_blank"&gt;Visit Google&lt;/a&gt;&lt;/p&gt;\n    &lt;p&gt;&lt;a href="mailto:me@school.com"&gt;Email Me&lt;/a&gt;&lt;/p&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>Match every attribute and text exactly as shown.',
+      hints:[
+        'Full boilerplate: DOCTYPE, html, head, title, body',
+        '&lt;img src="photo.jpg" alt="My Photo" width="200"&gt; — empty tag, no closing!',
+        '&lt;a href="https://google.com" target="_blank"&gt;Visit Google&lt;/a&gt;',
+        '&lt;a href="mailto:me@school.com"&gt;Email Me&lt;/a&gt;',
+      ],
       checks:[
-        { label:'&lt;img&gt; with src',    test: c => /<img[^>]+src/i.test(c) },
-        { label:'img has alt text',        test: c => /<img[^>]+alt\s*=/i.test(c) },
-        { label:'&lt;a&gt; with href',     test: c => /<a[^>]+href/i.test(c) },
-        { label:'target="_blank"',         test: c => /target\s*=\s*["']_blank["']/i.test(c) },
-        { label:'mailto: link',            test: c => /href\s*=\s*["']mailto:/i.test(c) },
+        { label:'Full boilerplate present',             test: c => /<!DOCTYPE\s+html>/i.test(c) && /<body/i.test(c) },
+        { label:'&lt;img src="photo.jpg"&gt;',          test: c => /<img[^>]+src\s*=\s*["']photo\.jpg["']/i.test(c) },
+        { label:'img alt="My Photo"',                   test: c => /<img[^>]+alt\s*=\s*["']My Photo["']/i.test(c) },
+        { label:'img width="200"',                      test: c => /<img[^>]+width\s*=\s*["']?200["']?/i.test(c) },
+        { label:'Link to google.com',                   test: c => /href\s*=\s*["']https:\/\/google\.com["']/i.test(c) },
+        { label:'target="_blank" on link',              test: c => /target\s*=\s*["']_blank["']/i.test(c) },
+        { label:'mailto: email link',                   test: c => /href\s*=\s*["']mailto:/i.test(c) },
       ]
     }
   },
@@ -611,15 +637,20 @@ x<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;</span>     <spa
     ],
     boss:{
       emoji:'👾',
-      task:'Write HTML with TWO lists: (1) an unordered list with type="square" showing 3 subjects you study, (2) an ordered list with type="A" starting at 2, showing 3 your favourite foods.',
-      hints:['&lt;ul type="square"&gt; ... &lt;/ul&gt;','&lt;ol type="A" start="2"&gt; ... &lt;/ol&gt;','Each item needs &lt;li&gt;...&lt;/li&gt;'],
+      task:'Type this exact code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;My Lists&lt;/title&gt;\n  &lt;/head&gt;\n  &lt;body&gt;\n    &lt;h1&gt;My Subjects&lt;/h1&gt;\n    &lt;ul type="square"&gt;\n      &lt;li&gt;Computer Science&lt;/li&gt;\n      &lt;li&gt;Mathematics&lt;/li&gt;\n      &lt;li&gt;Science&lt;/li&gt;\n    &lt;/ul&gt;\n    &lt;h2&gt;My Foods&lt;/h2&gt;\n    &lt;ol type="A" start="2"&gt;\n      &lt;li&gt;Momo&lt;/li&gt;\n      &lt;li&gt;Pizza&lt;/li&gt;\n      &lt;li&gt;Rice&lt;/li&gt;\n    &lt;/ol&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>Every tag, attribute, and list item text must match exactly.',
+      hints:[
+        'Full boilerplate: DOCTYPE, html, head, title, body',
+        '&lt;ul type="square"&gt; — square bullets',
+        'Each item: &lt;li&gt;Computer Science&lt;/li&gt;',
+        '&lt;ol type="A" start="2"&gt; — capital letters starting from B',
+      ],
       checks:[
-        { label:'&lt;ul&gt; present',       test: c => /<ul[\s>]/i.test(c) },
-        { label:'ul type="square"',        test: c => /<ul[^>]*type\s*=\s*["']square["']/i.test(c) },
-        { label:'&lt;ol&gt; present',       test: c => /<ol[\s>]/i.test(c) },
-        { label:'ol type="A"',             test: c => /<ol[^>]*type\s*=\s*["']A["']/i.test(c) },
-        { label:'start="2" on ol',         test: c => /start\s*=\s*["']2["']/i.test(c) },
-        { label:'3+ &lt;li&gt; items',     test: c => (c.match(/<li[\s>]/gi)||[]).length >= 3 },
+        { label:'Full boilerplate present',          test: c => /<!DOCTYPE\s+html>/i.test(c) && /<body/i.test(c) },
+        { label:'&lt;ul type="square"&gt;',          test: c => /<ul[^>]*type\s*=\s*["']square["']/i.test(c) },
+        { label:'3 items in ul',                     test: c => (c.match(/<li[\s>]/gi)||[]).length >= 6 },
+        { label:'&lt;ol type="A" start="2"&gt;',     test: c => /<ol[^>]*type\s*=\s*["']A["'][^>]*start\s*=\s*["']2["']/i.test(c) || /<ol[^>]*start\s*=\s*["']2["'][^>]*type\s*=\s*["']A["']/i.test(c) },
+        { label:'Computer Science in ul',            test: c => /Computer Science/i.test(c) },
+        { label:'Momo in ol',                        test: c => /Momo/i.test(c) },
       ]
     }
   },
@@ -699,15 +730,21 @@ x<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;</span>     <spa
     ],
     boss:{
       emoji:'👾',
-      task:'Write a table about 3 students with columns: Name, Subject, Marks. Include: border, caption, th headers, 3 data rows, and make the first header span 2 columns using colspan.',
-      hints:['&lt;table border="1"&gt;','&lt;caption&gt;Student Results&lt;/caption&gt;','&lt;th colspan="2"&gt; for merged header','3 rows of &lt;tr&gt;&lt;td&gt;...&lt;/td&gt;&lt;/tr&gt;'],
+      task:'Type this exact code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Student Table&lt;/title&gt;\n  &lt;/head&gt;\n  &lt;body&gt;\n    &lt;table border="1" cellpadding="5"&gt;\n      &lt;caption&gt;Class Results&lt;/caption&gt;\n      &lt;tr&gt;\n        &lt;th colspan="3"&gt;Student Information&lt;/th&gt;\n      &lt;/tr&gt;\n      &lt;tr&gt;\n        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Subject&lt;/th&gt;&lt;th&gt;Marks&lt;/th&gt;\n      &lt;/tr&gt;\n      &lt;tr&gt;\n        &lt;td&gt;Kaustup&lt;/td&gt;&lt;td&gt;Computer&lt;/td&gt;&lt;td&gt;98&lt;/td&gt;\n      &lt;/tr&gt;\n      &lt;tr&gt;\n        &lt;td&gt;Ram&lt;/td&gt;&lt;td&gt;Science&lt;/td&gt;&lt;td&gt;85&lt;/td&gt;\n      &lt;/tr&gt;\n    &lt;/table&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>Match every tag, attribute, and text exactly.',
+      hints:[
+        'Full boilerplate: DOCTYPE, html, head, title, body',
+        '&lt;table border="1" cellpadding="5"&gt;',
+        '&lt;caption&gt;Class Results&lt;/caption&gt; goes first inside table',
+        '&lt;th colspan="3"&gt;Student Information&lt;/th&gt; — merges 3 columns',
+      ],
       checks:[
-        { label:'&lt;table&gt; with border',  test: c => /<table[^>]*border/i.test(c) },
-        { label:'&lt;caption&gt; present',    test: c => /<caption>/i.test(c) },
-        { label:'&lt;th&gt; headers',         test: c => /<th[\s>]/i.test(c) },
-        { label:'colspan used',              test: c => /colspan/i.test(c) },
-        { label:'3+ &lt;tr&gt; data rows',   test: c => (c.match(/<tr[\s>]/gi)||[]).length >= 4 },
-        { label:'&lt;td&gt; cells present',  test: c => /<td[\s>]/i.test(c) },
+        { label:'Full boilerplate present',              test: c => /<!DOCTYPE\s+html>/i.test(c) && /<body/i.test(c) },
+        { label:'&lt;table border="1"&gt;',              test: c => /<table[^>]*border\s*=\s*["']1["']/i.test(c) },
+        { label:'&lt;caption&gt;Class Results&lt;/caption&gt;', test: c => /<caption>\s*Class Results\s*<\/caption>/i.test(c) },
+        { label:'&lt;th colspan="3"&gt;',               test: c => /<th[^>]*colspan\s*=\s*["']3["']/i.test(c) },
+        { label:'Name, Subject, Marks headers',          test: c => /Name/i.test(c) && /Subject/i.test(c) && /Marks/i.test(c) },
+        { label:'2+ data rows with &lt;td&gt;',         test: c => (c.match(/<td[\s>]/gi)||[]).length >= 4 },
+        { label:'Kaustup in table data',                 test: c => /Kaustup/i.test(c) },
       ]
     }
   },
@@ -803,23 +840,24 @@ x<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;</span>     <spa
     ],
     boss:{
       emoji:'👹',
-      task:'Write a complete student registration form with: a text input for name, password input, a textarea for address, radio buttons for gender (Male/Female with same name), checkboxes for 2 subjects, a select dropdown with 3 options, and submit + reset buttons.',
-      hints:['&lt;form action="#" method="post"&gt;','Radio buttons need same name="gender"','&lt;select&gt; needs &lt;option&gt; inside','End with submit and reset buttons'],
+      task:'Type this exact code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;&lt;title&gt;Student Form&lt;/title&gt;&lt;/head&gt;\n  &lt;body&gt;\n    &lt;h1&gt;Register Here&lt;/h1&gt;\n    &lt;form action="#" method="post"&gt;\n      Name: &lt;input type="text" name="uname"&gt;&lt;br&gt;\n      Password: &lt;input type="password" name="pass"&gt;&lt;br&gt;\n      Address: &lt;textarea rows="3" cols="25"&gt;&lt;/textarea&gt;&lt;br&gt;\n      Gender:\n      &lt;input type="radio" name="gender" value="male"&gt; Male\n      &lt;input type="radio" name="gender" value="female"&gt; Female&lt;br&gt;\n      Subjects:\n      &lt;input type="checkbox" name="cs"&gt; Computer\n      &lt;input type="checkbox" name="math"&gt; Maths&lt;br&gt;\n      Country: &lt;select name="country"&gt;\n        &lt;option value="np"&gt;Nepal&lt;/option&gt;\n        &lt;option value="in"&gt;India&lt;/option&gt;\n        &lt;option value="us"&gt;USA&lt;/option&gt;\n      &lt;/select&gt;&lt;br&gt;\n      &lt;input type="submit" value="Submit"&gt;\n      &lt;input type="reset" value="Clear"&gt;\n    &lt;/form&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>Match every tag, attribute, and text exactly.',
+      hints:[
+        'Full boilerplate: DOCTYPE, html, head, title, body',
+        'Both radio buttons must have name="gender"',
+        '&lt;select&gt; must have 3 &lt;option&gt; tags inside',
+        'End with type="submit" and type="reset" inputs',
+      ],
       checks:[
-        { label:'&lt;form&gt; tag',           test: c => /<form[\s>]/i.test(c) },
-        { label:'input type="text"',          test: c => /type\s*=\s*["']text["']/i.test(c) },
-        { label:'input type="password"',      test: c => /type\s*=\s*["']password["']/i.test(c) },
-        { label:'&lt;textarea&gt;',            test: c => /<textarea/i.test(c) },
-        { label:'radio buttons',              test: c => /type\s*=\s*["']radio["']/i.test(c) },
-        { label:'radio same name',            test: c => {
-          const m = c.match(/type\s*=\s*["']radio["'][^>]*name\s*=\s*["']([^"']+)["']/gi) ||
-                    c.match(/name\s*=\s*["']([^"']+)["'][^>]*type\s*=\s*["']radio["']/gi);
-          return m && m.length >= 2;
-        }},
-        { label:'checkboxes',                 test: c => /type\s*=\s*["']checkbox["']/i.test(c) },
-        { label:'&lt;select&gt; dropdown',    test: c => /<select/i.test(c) && /<option/i.test(c) },
-        { label:'submit button',              test: c => /type\s*=\s*["']submit["']/i.test(c) },
-        { label:'reset button',               test: c => /type\s*=\s*["']reset["']/i.test(c) },
+        { label:'Full boilerplate present',          test: c => /<!DOCTYPE\s+html>/i.test(c) && /<body/i.test(c) },
+        { label:'&lt;form action="#" method="post"&gt;', test: c => /<form[^>]*action\s*=\s*["']#["'][^>]*method\s*=\s*["']post["']/i.test(c) || /<form[^>]*method\s*=\s*["']post["'][^>]*action\s*=\s*["']#["']/i.test(c) },
+        { label:'input type="text"',                 test: c => /type\s*=\s*["']text["']/i.test(c) },
+        { label:'input type="password"',             test: c => /type\s*=\s*["']password["']/i.test(c) },
+        { label:'&lt;textarea&gt; tag',              test: c => /<textarea/i.test(c) },
+        { label:'2 radio buttons with name="gender"',test: c => (c.match(/type\s*=\s*["']radio["']/gi)||[]).length >= 2 && /name\s*=\s*["']gender["']/i.test(c) },
+        { label:'2 checkboxes',                      test: c => (c.match(/type\s*=\s*["']checkbox["']/gi)||[]).length >= 2 },
+        { label:'&lt;select&gt; with 3 options',     test: c => /<select/i.test(c) && (c.match(/<option/gi)||[]).length >= 3 },
+        { label:'type="submit" button',              test: c => /type\s*=\s*["']submit["']/i.test(c) },
+        { label:'type="reset" button',               test: c => /type\s*=\s*["']reset["']/i.test(c) },
       ]
     }
   },
@@ -922,15 +960,21 @@ x<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;</span>     <spa
     ],
     boss:{
       emoji:'🤖',
-      task:'Write a CSS file (style.css) that: resets margin and padding for all elements (*), styles body with a light background and Arial font, styles h1 with orange color and centered alignment, styles p with font-size 16px and line-height 1.6, and adds a red color on a:hover.',
-      hints:['* { margin: 0; padding: 0; }','body { background: #f5f5f5; font-family: Arial; }','h1 { color: orange; text-align: center; }','a:hover { color: red; }'],
+      task:'Type this exact CSS code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">* {\n  margin: 0;\n  padding: 0;\n}\nbody {\n  background: #f5f5f5;\n  font-family: Arial, sans-serif;\n}\nh1 {\n  color: orange;\n  text-align: center;\n}\np {\n  font-size: 16px;\n  line-height: 1.6;\n}\na:hover {\n  color: red;\n}</pre>This is a CSS file — no HTML tags needed here!',
+      hints:[
+        '* selects ALL elements — use it to reset margin and padding',
+        'body { background: #f5f5f5; font-family: Arial, sans-serif; }',
+        'h1 { color: orange; text-align: center; }',
+        'a:hover { color: red; } — colon between a and hover',
+      ],
       checks:[
-        { label:'* reset',                test: c => /\*\s*{[^}]*margin\s*:\s*0/i.test(c) },
-        { label:'body background',        test: c => /body\s*{[^}]*background/i.test(c) },
-        { label:'h1 styled',              test: c => /h1\s*{/i.test(c) },
-        { label:'h1 color',               test: c => /h1\s*{[^}]*color/i.test(c) },
-        { label:'p font-size',            test: c => /p\s*{[^}]*font-size/i.test(c) },
-        { label:'a:hover rule',           test: c => /a\s*:\s*hover\s*{/i.test(c) },
+        { label:'* { margin: 0; padding: 0; }',       test: c => /\*\s*{[^}]*margin\s*:\s*0[^}]*padding\s*:\s*0/i.test(c) || /\*\s*{[^}]*padding\s*:\s*0[^}]*margin\s*:\s*0/i.test(c) },
+        { label:'body { background: #f5f5f5; }',      test: c => /body\s*{[^}]*background\s*:\s*#f5f5f5/i.test(c) },
+        { label:'body font-family: Arial',            test: c => /body\s*{[^}]*font-family\s*:[^}]*Arial/i.test(c) },
+        { label:'h1 { color: orange; }',              test: c => /h1\s*{[^}]*color\s*:\s*orange/i.test(c) },
+        { label:'h1 { text-align: center; }',         test: c => /h1\s*{[^}]*text-align\s*:\s*center/i.test(c) },
+        { label:'p { font-size: 16px; }',             test: c => /p\s*{[^}]*font-size\s*:\s*16px/i.test(c) },
+        { label:'a:hover { color: red; }',            test: c => /a\s*:\s*hover\s*{[^}]*color\s*:\s*red/i.test(c) },
       ]
     }
   },
@@ -1029,16 +1073,23 @@ x<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;</span>     <spa
     ],
     boss:{
       emoji:'🤖',
-      task:'Write CSS for a styled card: a div.card with width 300px, light blue background, 2px solid navy border, border-radius 10px, 20px padding, and 10px margin auto (to centre it). Also style h2 inside the card with orange color.',
-      hints:['.card { width: 300px; background: lightblue; }','border: 2px solid navy;','border-radius: 10px;','margin: 10px auto; (centres a block element)','.card h2 { color: orange; }'],
+      task:'Type this exact CSS code in the editor:<br/><br/><pre style="background:#060914;padding:0.7rem;border-radius:8px;font-size:0.78rem;line-height:1.8;overflow-x:auto">* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\nbody {\n  background: #eee;\n  font-family: Arial, sans-serif;\n}\n.card {\n  width: 300px;\n  background: lightblue;\n  border: 2px solid navy;\n  border-radius: 10px;\n  padding: 20px;\n  margin: 10px auto;\n}\n.card h2 {\n  color: orange;\n}</pre>This is a CSS file — no HTML tags needed!',
+      hints:[
+        '* { margin: 0; padding: 0; box-sizing: border-box; }',
+        '.card { width: 300px; background: lightblue; }',
+        'border: 2px solid navy; border-radius: 10px;',
+        'margin: 10px auto; — auto left/right centres the card',
+      ],
       checks:[
-        { label:'.card selector',        test: c => /\.card\s*{/i.test(c) },
-        { label:'width set',             test: c => /\.card[^}]*width\s*:/i.test(c) },
-        { label:'background-color',      test: c => /\.card[^}]*background/i.test(c) },
-        { label:'border set',            test: c => /\.card[^}]*border\s*:/i.test(c) },
-        { label:'border-radius',         test: c => /border-radius/i.test(c) },
-        { label:'padding set',           test: c => /\.card[^}]*padding\s*:/i.test(c) },
-        { label:'margin: auto',          test: c => /margin[^:]*:\s*[^;]*auto/i.test(c) },
+        { label:'* reset with box-sizing',          test: c => /\*\s*{[^}]*box-sizing\s*:\s*border-box/i.test(c) },
+        { label:'body background: #eee',            test: c => /body\s*{[^}]*background\s*:\s*#eee/i.test(c) },
+        { label:'.card { width: 300px; }',          test: c => /\.card\s*{[^}]*width\s*:\s*300px/i.test(c) },
+        { label:'.card background: lightblue',      test: c => /\.card\s*{[^}]*background\s*:\s*lightblue/i.test(c) },
+        { label:'.card border: 2px solid navy',     test: c => /\.card\s*{[^}]*border\s*:\s*2px\s+solid\s+navy/i.test(c) },
+        { label:'.card border-radius: 10px',        test: c => /\.card\s*{[^}]*border-radius\s*:\s*10px/i.test(c) },
+        { label:'.card padding: 20px',              test: c => /\.card\s*{[^}]*padding\s*:\s*20px/i.test(c) },
+        { label:'.card margin: 10px auto',          test: c => /\.card\s*{[^}]*margin\s*:\s*10px\s+auto/i.test(c) },
+        { label:'.card h2 { color: orange; }',      test: c => /\.card\s+h2\s*{[^}]*color\s*:\s*orange/i.test(c) },
       ]
     }
   },
@@ -1588,4 +1639,142 @@ const Game = {
     const gu = document.getElementById(gutId);
     if(gu) gu.scrollTop = el.scrollTop;
   });
+});
+
+/* ════════════════════════════════════════════
+   BONUS LEVEL — Online Registration Form
+════════════════════════════════════════════ */
+
+const BONUS_CHECKLIST = [
+  { id:'doctype',   label:'&lt;!DOCTYPE html&gt;',           test: h => /<!DOCTYPE\s+html>/i.test(h) },
+  { id:'boiler',    label:'html + head + body tags',          test: h => /<html[\s>]/i.test(h) && /<head[\s>]/i.test(h) && /<body[\s>]/i.test(h) },
+  { id:'title',     label:'&lt;title&gt; in head',            test: h => /<title>[^<]+<\/title>/i.test(h) },
+  { id:'csslink',   label:'&lt;link&gt; to style.css',        test: h => /<link[^>]+href\s*=\s*["']style\.css["']/i.test(h) },
+  { id:'formtag',   label:'&lt;form&gt; with action + method',test: h => /<form[^>]+action[^>]+method/i.test(h) || /<form[^>]+method[^>]+action/i.test(h) },
+  { id:'heading',   label:'&lt;h1&gt; — Online Registration Form!', test: h => /<h1[^>]*>[\s\S]*?[Oo]nline\s+[Rr]egistration[\s\S]*?<\/h1>/i.test(h) },
+  { id:'firstname', label:'First Name text input',            test: h => /First\s*Name/i.test(h) && /type\s*=\s*["']text["']/i.test(h) },
+  { id:'lastname',  label:'Last Name text input',             test: h => /Last\s*Name/i.test(h) && /type\s*=\s*["']text["']/i.test(h) },
+  { id:'occupation',label:'Occupation text input',            test: h => /[Oo]ccupation/i.test(h) && /<input/i.test(h) },
+  { id:'gender',    label:'Gender radio buttons (Male/Female)', test: h => /[Mm]ale/i.test(h) && /[Ff]emale/i.test(h) && /type\s*=\s*["']radio["']/i.test(h) },
+  { id:'radiosame', label:'Both radios same name="gender"',   test: h => (h.match(/type\s*=\s*["']radio["']/gi)||[]).length >= 2 && /name\s*=\s*["']gender["']/i.test(h) },
+  { id:'education', label:'Education checkboxes (3)',         test: h => (h.match(/type\s*=\s*["']checkbox["']/gi)||[]).length >= 3 },
+  { id:'highschool',label:'High School checkbox label',       test: h => /High\s*School/i.test(h) },
+  { id:'graduate',  label:'Graduate checkbox label',          test: h => /[Gg]raduate/i.test(h) },
+  { id:'somecol',   label:'Some College checkbox label',      test: h => /Some\s*College/i.test(h) },
+  { id:'photo',     label:'Upload Photo — type="file"',       test: h => /type\s*=\s*["']file["']/i.test(h) },
+  { id:'textarea',  label:'&lt;textarea&gt; — Write about yourself', test: h => /<textarea/i.test(h) },
+  { id:'submit',    label:'Submit button',                    test: h => /type\s*=\s*["']submit["']/i.test(h) },
+  // CSS checks (checked against css editor)
+  { id:'cssbody',   label:'CSS: body styled',                 test: (h,c) => /body\s*{/i.test(c) },
+  { id:'cssform',   label:'CSS: form or .form styled',        test: (h,c) => /form\s*{|\.form\s*{/i.test(c) },
+  { id:'cssinput',  label:'CSS: input elements styled',       test: (h,c) => /input\s*{|input\s*\[/i.test(c) },
+  { id:'cssh1',     label:'CSS: h1 styled',                   test: (h,c) => /h1\s*{/i.test(c) },
+  { id:'cssborder', label:'CSS: border used',                 test: (h,c) => /border\s*:/i.test(c) },
+  { id:'csscolor',  label:'CSS: color or background used',    test: (h,c) => /color\s*:/i.test(c) || /background/i.test(c) },
+];
+
+Object.assign(Game, {
+
+  startBonus(){
+    GS.resetLives();
+    // build checklist
+    const grid = document.getElementById('bonusChecklistGrid');
+    grid.innerHTML = BONUS_CHECKLIST.map(item => `
+      <div class="cl-item" id="bcl-${item.id}">
+        <div class="cl-check" id="bclc-${item.id}"></div>
+        <span>${item.label}</span>
+      </div>
+    `).join('');
+
+    // clear editors
+    document.getElementById('bonusHtmlEditor').value = '';
+    document.getElementById('bonusCssEditor').value  = '';
+    document.getElementById('bonusResult').style.display = 'none';
+
+    // gutters
+    this._updateGutter('bonusHtmlEditor','bonusHtmlGutter');
+    this._updateGutter('bonusCssEditor','bonusCssGutter');
+
+    ['bonusHtmlEditor','bonusCssEditor'].forEach(id => {
+      const gutId = id === 'bonusHtmlEditor' ? 'bonusHtmlGutter' : 'bonusCssGutter';
+      const el = document.getElementById(id);
+      el.addEventListener('input',  () => { this._updateGutter(id, gutId); this._liveBonusCheck(); });
+      el.addEventListener('scroll', () => {
+        const gu = document.getElementById(gutId);
+        if(gu) gu.scrollTop = el.scrollTop;
+      });
+    });
+
+    // tab key
+    ['bonusHtmlEditor','bonusCssEditor'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if(e.key === 'Tab'){
+          e.preventDefault();
+          const el = e.target;
+          const s = el.selectionStart;
+          el.value = el.value.substring(0,s) + '  ' + el.value.substring(el.selectionEnd);
+          el.selectionStart = el.selectionEnd = s + 2;
+        }
+      });
+    });
+
+    showScreen('s-bonus');
+    refreshHearts();
+  },
+
+  _liveBonusCheck(){
+    const h = document.getElementById('bonusHtmlEditor').value;
+    const c = document.getElementById('bonusCssEditor').value;
+    BONUS_CHECKLIST.forEach(item => {
+      const el  = document.getElementById(`bcl-${item.id}`);
+      const chk = document.getElementById(`bclc-${item.id}`);
+      if(!el) return;
+      const pass = item.test(h, c);
+      if(pass){ el.classList.add('checked'); chk.textContent = '✓'; }
+      else    { el.classList.remove('checked'); chk.textContent = ''; }
+    });
+  },
+
+  runBonus(){
+    const h = document.getElementById('bonusHtmlEditor').value.trim();
+    const c = document.getElementById('bonusCssEditor').value.trim();
+    const result = document.getElementById('bonusResult');
+
+    if(!h){ toast('Write your HTML first! 📝','bad'); return; }
+    if(!c){ toast('You need CSS too! External CSS is required! 🎨','bad'); return; }
+
+    this._liveBonusCheck();
+    const results = BONUS_CHECKLIST.map(item => ({ label: item.label, pass: item.test(h,c) }));
+    const passed  = results.filter(r => r.pass).length;
+    const total   = results.length;
+    const needed  = Math.ceil(total * 0.8); // need 80% to win
+
+    if(passed >= needed){
+      result.className = 'boss-result success';
+      result.innerHTML = `
+        <strong>🌟 BONUS COMPLETE! ${passed}/${total} checks passed!</strong>
+        <ul>${results.map(r=>`<li>${r.pass?'✅':'❌'} ${r.label}</li>`).join('')}</ul>
+      `;
+      result.style.display = 'block';
+      SFX.victory();
+      confetti(120);
+      GS.addXP(300);
+      GS.clearLevel('bonus', 3);
+      toast('🌟 BONUS LEVEL COMPLETE! +300 XP!','good');
+    } else {
+      result.className = 'boss-result fail';
+      result.innerHTML = `
+        <strong>❌ ${passed}/${total} — need ${needed} to complete! Keep going!</strong>
+        <ul>${results.map(r=>`<li>${r.pass?'✅':'❌'} ${r.label}</li>`).join('')}</ul>
+      `;
+      result.style.display = 'block';
+      SFX.wrong();
+      if(GS.loseLife()){
+        setTimeout(() => this.gameOver('So close! Try the bonus again! 💀'), 800);
+      } else {
+        toast(`💔 ${GS.lives} lives left — check the red items!`,'bad');
+      }
+    }
+  },
+
 });
