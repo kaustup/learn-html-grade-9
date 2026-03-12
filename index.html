@@ -1,0 +1,1634 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebDev Quest 🎮</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0e17;
+  --surface: #1a1830;
+  --card: #22203a;
+  --border: #3a3860;
+  --html: #ff6b35;
+  --css: #00c9a7;
+  --gold: #ffd60a;
+  --pink: #ff4d8d;
+  --blue: #4dabf7;
+  --green: #69db7c;
+  --red: #ff6b6b;
+  --text: #f0eeff;
+  --muted: #8880aa;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Stars background */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(255,107,53,0.07) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(0,201,167,0.07) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+.stars {
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.star {
+  position:absolute;
+  width:2px; height:2px;
+  background:white;
+  border-radius:50%;
+  animation: twinkle 3s infinite;
+}
+@keyframes twinkle {
+  0%,100%{opacity:0.2;} 50%{opacity:1;}
+}
+
+/* ===== SCREENS ===== */
+.screen { display:none; position:relative; z-index:1; min-height:100vh; }
+.screen.active { display:block; }
+
+/* ===== HERO ===== */
+#screen-home {
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding: 2rem 1.5rem;
+}
+#screen-home.active { display:flex; }
+
+.game-logo {
+  font-family:'Fredoka One', cursive;
+  font-size: clamp(3rem, 10vw, 6rem);
+  background: linear-gradient(135deg, var(--html), var(--gold), var(--css));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height:1;
+  animation: logoFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(255,107,53,0.4));
+}
+@keyframes logoFloat {
+  0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);}
+}
+
+.tagline {
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin: 0.8rem 0 2rem;
+  font-weight:600;
+}
+
+.xp-bar-wrap {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border-radius:30px;
+  height:20px;
+  border: 2px solid var(--border);
+  overflow:hidden;
+  margin-bottom: 0.3rem;
+}
+.xp-bar-fill {
+  height:100%;
+  background: linear-gradient(90deg, var(--html), var(--gold));
+  border-radius:30px;
+  transition: width 0.5s ease;
+}
+.xp-label {
+  font-size:0.8rem;
+  color: var(--muted);
+  margin-bottom:2rem;
+  font-family:'Fredoka One', cursive;
+  letter-spacing:0.05em;
+}
+
+.chapter-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap:1rem;
+  width:100%;
+  max-width:900px;
+}
+
+.chapter-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius:16px;
+  padding:1.4rem 1.2rem;
+  cursor:pointer;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  text-align:left;
+  position:relative;
+  overflow:hidden;
+}
+.chapter-card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transition: opacity 0.3s;
+}
+.chapter-card.html-ch::before { background: radial-gradient(circle at top left, rgba(255,107,53,0.12), transparent 70%); }
+.chapter-card.css-ch::before  { background: radial-gradient(circle at top left, rgba(0,201,167,0.12), transparent 70%); }
+.chapter-card:hover { transform:translateY(-4px); }
+.chapter-card.html-ch:hover { border-color: var(--html); box-shadow: 0 8px 30px rgba(255,107,53,0.2); }
+.chapter-card.css-ch:hover  { border-color: var(--css); box-shadow: 0 8px 30px rgba(0,201,167,0.2); }
+.chapter-card::before { opacity:1; }
+
+.ch-icon { font-size:2.5rem; margin-bottom:0.6rem; display:block; }
+.ch-title { font-family:'Fredoka One', cursive; font-size:1.5rem; margin-bottom:0.3rem; }
+.ch-title.html-ch { color:var(--html); }
+.ch-title.css-ch  { color:var(--css); }
+.ch-subtitle { font-size:0.85rem; color:var(--muted); margin-bottom:0.8rem; }
+.ch-topics-count {
+  display:inline-flex;
+  align-items:center;
+  gap:0.4rem;
+  font-size:0.78rem;
+  background: rgba(255,255,255,0.06);
+  padding: 0.3rem 0.7rem;
+  border-radius:20px;
+  color:var(--muted);
+}
+
+/* ===== LESSON SCREEN ===== */
+#screen-lesson {
+  padding: 1rem;
+  max-width:860px;
+  margin:0 auto;
+}
+
+.lesson-topbar {
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding: 0.8rem 0;
+  margin-bottom:1rem;
+}
+.back-btn {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family:'Nunito', sans-serif;
+  font-weight:700;
+  font-size:0.85rem;
+  transition: all 0.2s;
+}
+.back-btn:hover { border-color:var(--muted); }
+.lesson-title {
+  font-family:'Fredoka One', cursive;
+  font-size:1.6rem;
+  flex:1;
+}
+.lesson-title.html-col { color: var(--html); }
+.lesson-title.css-col  { color: var(--css); }
+
+/* Lesson sidebar + content layout */
+.lesson-layout {
+  display:grid;
+  grid-template-columns: 240px 1fr;
+  gap:1rem;
+  align-items:start;
+}
+@media(max-width:700px){
+  .lesson-layout { grid-template-columns:1fr; }
+  #topic-list { display:flex; flex-wrap:wrap; gap:0.4rem; }
+}
+
+#topic-list {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  position:sticky;
+  top:1rem;
+}
+.topic-list-head {
+  padding:0.8rem 1rem;
+  font-family:'Fredoka One', cursive;
+  font-size:1rem;
+  color:var(--muted);
+  border-bottom:1px solid var(--border);
+  letter-spacing:0.05em;
+}
+.topic-item {
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:0.65rem 1rem;
+  cursor:pointer;
+  transition: background 0.15s;
+  font-size:0.82rem;
+  font-weight:600;
+  border-left:3px solid transparent;
+}
+.topic-item:hover { background: rgba(255,255,255,0.04); }
+.topic-item.active-topic { background: rgba(255,107,53,0.08); border-left-color: var(--html); color:var(--html); }
+.topic-item.active-topic.css-topic { background: rgba(0,201,167,0.08); border-left-color: var(--css); color:var(--css); }
+.topic-item.done::after { content:'✓'; margin-left:auto; color:var(--green); font-size:0.75rem; }
+.topic-num { width:20px; height:20px; border-radius:50%; background:var(--border); display:flex;align-items:center;justify-content:center; font-size:0.65rem; font-weight:800; flex-shrink:0; }
+
+/* Content area */
+#lesson-content {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius:14px;
+  padding: 1.5rem;
+  min-height:400px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.content-topic-title {
+  font-family:'Fredoka One', cursive;
+  font-size:1.8rem;
+  margin-bottom:0.3rem;
+}
+.content-topic-title.html-col { color:var(--html); }
+.content-topic-title.css-col  { color:var(--css); }
+
+.content-source {
+  font-size:0.72rem;
+  color:var(--muted);
+  margin-bottom:1.2rem;
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+}
+.source-badge {
+  background: rgba(255,214,10,0.12);
+  color: var(--gold);
+  border: 1px solid rgba(255,214,10,0.3);
+  padding:0.15rem 0.5rem;
+  border-radius:4px;
+  font-size:0.68rem;
+  font-weight:700;
+}
+
+.explanation {
+  font-size:0.92rem;
+  line-height:1.8;
+  color:#d0ccee;
+  margin-bottom:1.2rem;
+}
+.explanation strong { color:var(--text); font-weight:800; }
+.explanation em { color:var(--gold); font-style:normal; font-weight:700; }
+
+/* Code block */
+.code-block {
+  background: #0a0912;
+  border: 1px solid var(--border);
+  border-radius:10px;
+  padding:1rem 1.1rem;
+  margin: 0.8rem 0;
+  font-family:'Courier New', monospace;
+  font-size:0.8rem;
+  line-height:1.8;
+  overflow-x:auto;
+  position:relative;
+}
+.code-block-label {
+  font-size:0.62rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:0.5rem;
+  font-family:'Fredoka One', cursive;
+}
+.ct { color:#ff8c69; }   /* html tag */
+.ca { color:#ffd60a; }   /* attribute */
+.cv { color:#69db7c; }   /* value */
+.cp { color:#4dabf7; }   /* css property */
+.cc { color:#8880aa; font-style:italic; } /* comment */
+.cs { color:#ff4d8d; }   /* string */
+.ck { color:#c792ea; }   /* keyword */
+
+/* Fact box */
+.fact-box {
+  display:flex;
+  gap:0.8rem;
+  background: rgba(255,214,10,0.06);
+  border: 1px solid rgba(255,214,10,0.25);
+  border-radius:10px;
+  padding:0.9rem 1rem;
+  margin: 0.8rem 0;
+  align-items:flex-start;
+}
+.fact-icon { font-size:1.3rem; flex-shrink:0; margin-top:0.1rem; }
+.fact-text { font-size:0.85rem; color:#d0ccee; line-height:1.7; }
+.fact-text strong { color:var(--gold); }
+
+/* Table */
+.info-table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.82rem;
+  margin:0.8rem 0;
+  border-radius:10px;
+  overflow:hidden;
+}
+.info-table th {
+  background: rgba(255,255,255,0.07);
+  padding:0.6rem 0.9rem;
+  text-align:left;
+  font-weight:700;
+  color:var(--gold);
+  font-size:0.75rem;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+}
+.info-table td {
+  padding:0.55rem 0.9rem;
+  border-top:1px solid var(--border);
+  color:#d0ccee;
+  font-family:'Courier New', monospace;
+  font-size:0.78rem;
+  vertical-align:top;
+}
+.info-table tr:hover td { background:rgba(255,255,255,0.03); }
+.info-table .tag-cell { color:var(--html); }
+.info-table .attr-cell { color:var(--gold); }
+.info-table .desc-cell { font-family:'Nunito', sans-serif; font-size:0.8rem; }
+
+/* Preview box */
+.preview-box {
+  background:white;
+  border-radius:10px;
+  padding:1rem 1.2rem;
+  margin:0.8rem 0;
+  color:#333;
+  font-size:0.9rem;
+  line-height:1.7;
+  border: 2px solid var(--border);
+}
+.preview-label {
+  font-size:0.65rem;
+  color:var(--css);
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  font-family:'Fredoka One', cursive;
+  margin-bottom:0.5rem;
+}
+
+/* Color swatches */
+.color-grid {
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.5rem;
+  margin:0.8rem 0;
+}
+.swatch {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.3rem;
+}
+.swatch-box {
+  width:48px; height:48px;
+  border-radius:8px;
+  border:2px solid rgba(255,255,255,0.15);
+}
+.swatch-name { font-size:0.62rem; color:var(--muted); text-align:center; }
+
+/* Navigation buttons */
+.nav-btns {
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  margin-top:1.5rem;
+  padding-top:1rem;
+  border-top:1px solid var(--border);
+}
+.nav-btn {
+  padding: 0.7rem 1.5rem;
+  border-radius:10px;
+  font-family:'Fredoka One', cursive;
+  font-size:1rem;
+  cursor:pointer;
+  border:2px solid transparent;
+  transition: all 0.2s;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+}
+.nav-btn.prev { background:var(--surface); border-color:var(--border); color:var(--muted); }
+.nav-btn.prev:hover { color:var(--text); border-color:var(--muted); }
+.nav-btn.next-html { background:linear-gradient(135deg,#ff6b35,#ff4d8d); color:white; }
+.nav-btn.next-css  { background:linear-gradient(135deg,#00c9a7,#4dabf7); color:white; }
+.nav-btn.next-html:hover { transform:translateY(-2px); box-shadow:0 4px 20px rgba(255,107,53,0.4); }
+.nav-btn.next-css:hover  { transform:translateY(-2px); box-shadow:0 4px 20px rgba(0,201,167,0.4); }
+
+/* ===== QUIZ SCREEN ===== */
+#screen-quiz {
+  padding:1.5rem 1rem;
+  max-width:700px;
+  margin:0 auto;
+}
+.quiz-topbar {
+  display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;
+}
+.quiz-progress-text {
+  font-family:'Fredoka One', cursive;
+  font-size:1rem;
+  color:var(--muted);
+  margin-left:auto;
+}
+.quiz-question-card {
+  background:var(--card);
+  border:2px solid var(--border);
+  border-radius:16px;
+  padding:1.8rem;
+  animation: fadeIn 0.3s ease;
+}
+.q-subject-badge {
+  display:inline-block;
+  font-size:0.68rem;
+  font-weight:800;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:0.25rem 0.7rem;
+  border-radius:20px;
+  margin-bottom:0.8rem;
+}
+.q-subject-badge.html-b { background:rgba(255,107,53,0.15); color:var(--html); }
+.q-subject-badge.css-b  { background:rgba(0,201,167,0.15);  color:var(--css); }
+.quiz-q-text {
+  font-size:1.1rem;
+  font-weight:700;
+  line-height:1.6;
+  margin-bottom:1.2rem;
+}
+.quiz-options { display:flex; flex-direction:column; gap:0.6rem; }
+.quiz-opt {
+  padding:0.75rem 1.1rem;
+  border:2px solid var(--border);
+  border-radius:10px;
+  background:var(--surface);
+  color:var(--text);
+  font-family:'Nunito', sans-serif;
+  font-size:0.9rem;
+  font-weight:600;
+  cursor:pointer;
+  text-align:left;
+  transition:all 0.2s;
+}
+.quiz-opt:hover:not(:disabled) { border-color:var(--blue); background:rgba(77,171,247,0.08); }
+.quiz-opt.opt-correct { border-color:var(--green); background:rgba(105,219,124,0.12); color:var(--green); }
+.quiz-opt.opt-wrong   { border-color:var(--red);   background:rgba(255,107,107,0.12); color:var(--red); }
+.quiz-explanation {
+  margin-top:1rem;
+  padding:0.8rem 1rem;
+  background:rgba(255,255,255,0.04);
+  border-left:3px solid var(--gold);
+  border-radius:0 8px 8px 0;
+  font-size:0.85rem;
+  color:#d0ccee;
+  line-height:1.6;
+  display:none;
+}
+.quiz-next-btn {
+  margin-top:1.2rem;
+  padding:0.75rem 2rem;
+  background:linear-gradient(135deg,var(--html),var(--pink));
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-family:'Fredoka One', cursive;
+  font-size:1.1rem;
+  cursor:pointer;
+  display:none;
+  transition: transform 0.2s;
+  width:100%;
+}
+.quiz-next-btn:hover { transform:translateY(-2px); }
+
+/* Score screen */
+.score-screen {
+  text-align:center;
+  padding:2rem;
+  background:var(--card);
+  border:2px solid var(--border);
+  border-radius:16px;
+  display:none;
+}
+.score-big {
+  font-family:'Fredoka One', cursive;
+  font-size:5rem;
+  color:var(--gold);
+  line-height:1;
+  filter: drop-shadow(0 0 20px rgba(255,214,10,0.5));
+}
+.score-msg { font-size:1.2rem; font-weight:700; margin: 0.5rem 0 1.5rem; color:var(--muted); }
+.score-action-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+.score-btn {
+  padding:0.7rem 1.5rem;
+  border-radius:10px;
+  font-family:'Fredoka One', cursive;
+  font-size:1rem;
+  cursor:pointer;
+  transition:all 0.2s;
+  border:2px solid;
+}
+.score-btn.home-btn { background:transparent; border-color:var(--border); color:var(--muted); }
+.score-btn.retry-btn { background:linear-gradient(135deg,var(--html),var(--pink)); color:white; border-color:transparent; }
+
+/* Confetti animation */
+@keyframes confettiFall {
+  0%{transform:translateY(-10px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0;}
+}
+.confetti-piece {
+  position:fixed;
+  width:10px; height:10px;
+  border-radius:2px;
+  animation: confettiFall linear forwards;
+  pointer-events:none;
+  z-index:999;
+}
+
+/* XP popup */
+.xp-popup {
+  position:fixed;
+  top:60px;
+  right:20px;
+  background: var(--gold);
+  color:#000;
+  font-family:'Fredoka One', cursive;
+  font-size:1.2rem;
+  padding:0.5rem 1rem;
+  border-radius:12px;
+  z-index:100;
+  animation: xpPop 1.5s ease forwards;
+  display:none;
+}
+@keyframes xpPop {
+  0%{opacity:0;transform:translateY(10px) scale(0.8);}
+  20%{opacity:1;transform:translateY(0) scale(1.1);}
+  80%{opacity:1;transform:translateY(0);}
+  100%{opacity:0;transform:translateY(-20px);}
+}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="xp-popup" id="xpPopup">+10 XP ⚡</div>
+
+<!-- ====== HOME SCREEN ====== -->
+<div class="screen active" id="screen-home">
+  <div class="game-logo">WebDev Quest</div>
+  <p class="tagline">🎮 Learn HTML & CSS like a game!</p>
+
+  <div class="xp-bar-wrap">
+    <div class="xp-bar-fill" id="homeXpFill" style="width:0%"></div>
+  </div>
+  <div class="xp-label" id="homeXpLabel">0 / 200 XP</div>
+
+  <div class="chapter-grid">
+    <div class="chapter-card html-ch" onclick="openChapter('html')">
+      <span class="ch-icon">🌐</span>
+      <div class="ch-title html-ch">Chapter 1: HTML</div>
+      <div class="ch-subtitle">Structure of the Web — Tags, Attributes & More</div>
+      <div class="ch-topics-count">📚 22 Topics · Based on W3Schools + Grade 9</div>
+    </div>
+    <div class="chapter-card css-ch" onclick="openChapter('css')">
+      <span class="ch-icon">🎨</span>
+      <div class="ch-title css-ch">Chapter 2: CSS</div>
+      <div class="ch-subtitle">Style the Web — Colors, Layouts & Design</div>
+      <div class="ch-topics-count">📚 7 Topics · Based on W3Schools + Grade 9</div>
+    </div>
+    <div class="chapter-card html-ch" onclick="openQuiz()">
+      <span class="ch-icon">🏆</span>
+      <div class="ch-title html-ch" style="color:var(--gold)">Final Quiz</div>
+      <div class="ch-subtitle">Test everything you've learned! 15 questions</div>
+      <div class="ch-topics-count">⚡ Earn XP · Unlock badges</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LESSON SCREEN ====== -->
+<div class="screen" id="screen-lesson">
+  <div id="lesson-inner" style="max-width:860px;margin:0 auto;padding:1rem;">
+    <div class="lesson-topbar">
+      <button class="back-btn" onclick="goHome()">← Back</button>
+      <div class="lesson-title" id="lessonTitle">HTML</div>
+      <button class="back-btn" onclick="openQuiz()" style="background:linear-gradient(135deg,#ff6b35,#ff4d8d);border-color:transparent;color:white;">🏆 Quiz</button>
+    </div>
+    <div class="lesson-layout">
+      <div id="topic-list">
+        <div class="topic-list-head">📋 TOPICS</div>
+        <div id="topicListItems"></div>
+      </div>
+      <div id="lesson-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== QUIZ SCREEN ====== -->
+<div class="screen" id="screen-quiz">
+  <div class="quiz-topbar">
+    <button class="back-btn" onclick="goHome()">← Home</button>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--gold);">🏆 Final Quiz</div>
+    <div class="quiz-progress-text" id="quizProgressText">1 / 15</div>
+  </div>
+  <div id="quizContainer"></div>
+  <div class="score-screen" id="scoreScreen"></div>
+</div>
+
+<script>
+// ============================================================
+// STARS
+// ============================================================
+const starsEl = document.getElementById('stars');
+for(let i=0;i<80;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.left=Math.random()*100+'%';
+  s.style.top=Math.random()*100+'%';
+  s.style.animationDelay=Math.random()*3+'s';
+  s.style.animationDuration=(2+Math.random()*3)+'s';
+  starsEl.appendChild(s);
+}
+
+// ============================================================
+// XP SYSTEM
+// ============================================================
+let xp = parseInt(localStorage.getItem('wdq_xp')||'0');
+let done = JSON.parse(localStorage.getItem('wdq_done')||'[]');
+
+function saveProgress(){ localStorage.setItem('wdq_xp',xp); localStorage.setItem('wdq_done',JSON.stringify(done)); }
+function addXP(n){
+  xp+=n;
+  if(xp>200)xp=200;
+  saveProgress();
+  updateXPBar();
+  showXPPopup(n);
+}
+function updateXPBar(){
+  const pct=Math.min(100,(xp/200)*100);
+  document.getElementById('homeXpFill').style.width=pct+'%';
+  document.getElementById('homeXpLabel').textContent=xp+' / 200 XP';
+}
+function showXPPopup(n){
+  const p=document.getElementById('xpPopup');
+  p.textContent='+'+n+' XP ⚡';
+  p.style.display='block';
+  setTimeout(()=>p.style.display='none',1500);
+}
+updateXPBar();
+
+// ============================================================
+// DATA
+// ============================================================
+const htmlTopics = [
+  {
+    id:'html-intro',
+    title:'Intro to HTML',
+    icon:'🌐',
+    content:`
+      <div class="content-topic-title html-col">What is HTML?</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9 Textbook</div>
+      <div class="explanation">
+        <strong>HTML</strong> stands for <em>HyperText Markup Language</em>. It is the <strong>standard language</strong> used to create and design web pages on the internet.<br><br>
+        According to W3Schools: HTML describes the <strong>structure of a web page</strong>. Browsers read HTML and decide how to display content.<br><br>
+        🧠 Think of HTML like the <strong>skeleton</strong> of a human body — it gives structure and shape!
+      </div>
+      <div class="fact-box"><div class="fact-icon">💡</div><div class="fact-text"><strong>Fun Fact:</strong> HTML was created by <strong>Tim Berners-Lee</strong> in 1991. The latest version is <strong>HTML5</strong> (2014).</div></div>
+      <div class="fact-box"><div class="fact-icon">🎯</div><div class="fact-text">HTML is <strong>NOT</strong> a programming language — it is a <strong>markup language</strong>. It uses tags to mark up content.</div></div>
+    `
+  },
+  {
+    id:'html-tags',
+    title:'Intro to HTML Tags',
+    icon:'🏷️',
+    content:`
+      <div class="content-topic-title html-col">HTML Tags</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span></div>
+      <div class="explanation">
+        HTML tags are like <strong>instructions</strong> that tell the browser what to do. They are written inside <em>angle brackets</em> &lt; &gt;.
+      </div>
+      <div class="code-block-label">Basic Tag Syntax</div>
+      <div class="code-block"><span class="ct">&lt;tagname&gt;</span> Content goes here <span class="ct">&lt;/tagname&gt;</span></div>
+      <table class="info-table">
+        <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+        <tr><td class="tag-cell">Container Tag</td><td class="desc-cell">Has opening AND closing tag. Content goes between them.</td><td class="tag-cell">&lt;p&gt;...&lt;/p&gt;</td></tr>
+        <tr><td class="tag-cell">Empty Tag</td><td class="desc-cell">Self-closing. No content inside. No closing tag needed.</td><td class="tag-cell">&lt;br&gt;, &lt;img&gt;, &lt;hr&gt;</td></tr>
+      </table>
+      <div class="fact-box"><div class="fact-icon">📌</div><div class="fact-text"><strong>Container tags</strong> (like &lt;p&gt;, &lt;div&gt;, &lt;h1&gt;) wrap content. <strong>Empty tags</strong> (like &lt;br&gt;, &lt;img&gt;) stand alone and don't need a closing tag.</div></div>
+    `
+  },
+  {
+    id:'html-attributes',
+    title:'HTML Attributes',
+    icon:'⚙️',
+    content:`
+      <div class="content-topic-title html-col">HTML Attributes</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span></div>
+      <div class="explanation">
+        Attributes provide <strong>extra information</strong> about HTML elements. They always go inside the <em>opening tag</em> and come in <strong>name="value"</strong> pairs.
+      </div>
+      <div class="code-block-label">Syntax</div>
+      <div class="code-block"><span class="ct">&lt;tagname</span> <span class="ca">attribute</span>=<span class="cv">"value"</span><span class="ct">&gt;</span>Content<span class="ct">&lt;/tagname&gt;</span></div>
+      <div class="code-block-label">Examples</div>
+      <div class="code-block">
+<span class="ct">&lt;a</span> <span class="ca">href</span>=<span class="cv">"https://google.com"</span><span class="ct">&gt;</span>Click Me<span class="ct">&lt;/a&gt;</span>
+<span class="ct">&lt;img</span> <span class="ca">src</span>=<span class="cv">"photo.jpg"</span> <span class="ca">width</span>=<span class="cv">"200"</span><span class="ct">&gt;</span>
+<span class="ct">&lt;p</span> <span class="ca">align</span>=<span class="cv">"center"</span><span class="ct">&gt;</span>Hello!<span class="ct">&lt;/p&gt;</span>
+      </div>
+      <table class="info-table">
+        <tr><th>Attribute</th><th>Used In</th><th>Purpose</th></tr>
+        <tr><td class="attr-cell">href</td><td>&lt;a&gt;</td><td class="desc-cell">Link destination</td></tr>
+        <tr><td class="attr-cell">src</td><td>&lt;img&gt;</td><td class="desc-cell">Image file path</td></tr>
+        <tr><td class="attr-cell">align</td><td>Many tags</td><td class="desc-cell">left / center / right</td></tr>
+        <tr><td class="attr-cell">color</td><td>font, body</td><td class="desc-cell">Text/background color</td></tr>
+        <tr><td class="attr-cell">width/height</td><td>img, table</td><td class="desc-cell">Size in px or %</td></tr>
+      </table>
+    `
+  },
+  {
+    id:'html-structure',
+    title:'Basic HTML Structure',
+    icon:'🏗️',
+    content:`
+      <div class="content-topic-title html-col">Basic HTML Structure</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">Every HTML document follows this standard structure. Think of it as the <strong>blueprint</strong> of every webpage!</div>
+      <div class="code-block-label">Complete HTML Template</div>
+      <div class="code-block">
+<span class="ct">&lt;!DOCTYPE html&gt;</span>    <span class="cc">← Tells browser: this is HTML5</span>
+<span class="ct">&lt;html&gt;</span>            <span class="cc">← Root element (wraps everything)</span>
+
+  <span class="ct">&lt;head&gt;</span>          <span class="cc">← Info about the page (not visible)</span>
+    <span class="ct">&lt;title&gt;</span>My Page<span class="ct">&lt;/title&gt;</span>   <span class="cc">← Tab title</span>
+  <span class="ct">&lt;/head&gt;</span>
+
+  <span class="ct">&lt;body&gt;</span>          <span class="cc">← Everything the user SEES goes here</span>
+    <span class="ct">&lt;h1&gt;</span>Hello World!<span class="ct">&lt;/h1&gt;</span>
+    <span class="ct">&lt;p&gt;</span>My first webpage.<span class="ct">&lt;/p&gt;</span>
+  <span class="ct">&lt;/body&gt;</span>
+
+<span class="ct">&lt;/html&gt;</span>
+      </div>
+      <div class="fact-box"><div class="fact-icon">🧠</div><div class="fact-text"><strong>&lt;!DOCTYPE html&gt;</strong> = tells the browser "use HTML5 rules". Always write it as the very first line!</div></div>
+    `
+  },
+  {
+    id:'html-basic-tags',
+    title:'Comment, BR & HR',
+    icon:'💬',
+    content:`
+      <div class="content-topic-title html-col">Comment, &lt;br&gt; and &lt;hr&gt;</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span></div>
+      <div class="code-block-label">HTML Comment</div>
+      <div class="code-block"><span class="cc">&lt;!-- This is a comment. Browser ignores it! --&gt;</span>
+<span class="cc">&lt;!-- Used to leave notes in your code --&gt;</span></div>
+      <div class="code-block-label">Line Break &lt;br&gt; (Empty Tag)</div>
+      <div class="code-block"><span class="ct">&lt;p&gt;</span>Line one.<span class="ct">&lt;br&gt;</span>Line two on a new line.<span class="ct">&lt;/p&gt;</span></div>
+      <div class="preview-box">
+        <div class="preview-label">🔍 Browser Output</div>
+        Line one.<br>Line two on a new line.
+      </div>
+      <div class="code-block-label">Horizontal Rule &lt;hr&gt; (Empty Tag)</div>
+      <div class="code-block"><span class="ct">&lt;p&gt;</span>Above the line<span class="ct">&lt;/p&gt;</span>
+<span class="ct">&lt;hr&gt;</span>
+<span class="ct">&lt;p&gt;</span>Below the line<span class="ct">&lt;/p&gt;</span></div>
+      <div class="preview-box">
+        <div class="preview-label">🔍 Browser Output</div>
+        Above the line<hr style="border-color:#ccc">Below the line
+      </div>
+    `
+  },
+  {
+    id:'html-paragraphs',
+    title:'Paragraph & Headings',
+    icon:'📝',
+    content:`
+      <div class="content-topic-title html-col">Paragraphs & Headings</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span></div>
+      <div class="code-block-label">Paragraph Tag</div>
+      <div class="code-block"><span class="ct">&lt;p</span> <span class="ca">align</span>=<span class="cv">"center"</span><span class="ct">&gt;</span>Centered paragraph<span class="ct">&lt;/p&gt;</span>
+<span class="ct">&lt;p</span> <span class="ca">align</span>=<span class="cv">"right"</span><span class="ct">&gt;</span>Right aligned<span class="ct">&lt;/p&gt;</span>
+<span class="ct">&lt;p</span> <span class="ca">align</span>=<span class="cv">"justify"</span><span class="ct">&gt;</span>Justified text<span class="ct">&lt;/p&gt;</span></div>
+      <div class="code-block-label">Heading Tags (h1 to h6)</div>
+      <div class="code-block">
+<span class="ct">&lt;h1&gt;</span>Biggest Heading<span class="ct">&lt;/h1&gt;</span>
+<span class="ct">&lt;h2&gt;</span>Second Biggest<span class="ct">&lt;/h2&gt;</span>
+<span class="ct">&lt;h3&gt;</span>Third<span class="ct">&lt;/h3&gt;</span>
+<span class="cc">... up to h6 (smallest)</span></div>
+      <div class="preview-box">
+        <div class="preview-label">🔍 Browser Output</div>
+        <h1 style="font-size:1.8rem;margin:0">h1 - Biggest</h1>
+        <h2 style="font-size:1.4rem;margin:0">h2 - Big</h2>
+        <h3 style="font-size:1.1rem;margin:0">h3 - Medium</h3>
+        <h4 style="font-size:0.95rem;margin:0">h4 - Small</h4>
+      </div>
+      <div class="fact-box"><div class="fact-icon">⚙️</div><div class="fact-text">Heading attributes: <strong>align</strong> (left/center/right), <strong>color</strong> (using the font tag or CSS). Only <strong>one h1</strong> per page for best SEO!</div></div>
+    `
+  },
+  {
+    id:'html-text-styles',
+    title:'Text Styles: sup, sub, U, i',
+    icon:'✍️',
+    content:`
+      <div class="content-topic-title html-col">Text Style Tags</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <table class="info-table">
+        <tr><th>Tag</th><th>Name</th><th>What it does</th></tr>
+        <tr><td class="tag-cell">&lt;sup&gt;</td><td>Superscript</td><td class="desc-cell">Raises text up (like x²)</td></tr>
+        <tr><td class="tag-cell">&lt;sub&gt;</td><td>Subscript</td><td class="desc-cell">Lowers text down (like H₂O)</td></tr>
+        <tr><td class="tag-cell">&lt;u&gt;</td><td>Underline</td><td class="desc-cell">Underlines the text</td></tr>
+        <tr><td class="tag-cell">&lt;i&gt;</td><td>Italic</td><td class="desc-cell">Makes text italic</td></tr>
+        <tr><td class="tag-cell">&lt;b&gt;</td><td>Bold</td><td class="desc-cell">Makes text bold</td></tr>
+        <tr><td class="tag-cell">&lt;strong&gt;</td><td>Important</td><td class="desc-cell">Bold + semantic meaning</td></tr>
+      </table>
+      <div class="code-block-label">Examples</div>
+      <div class="code-block">H<span class="ct">&lt;sub&gt;</span>2<span class="ct">&lt;/sub&gt;</span>O        <span class="cc">→ H₂O (Water formula)</span>
+x<span class="ct">&lt;sup&gt;</span>2<span class="ct">&lt;/sup&gt;</span>         <span class="cc">→ x² (x squared)</span>
+<span class="ct">&lt;u&gt;</span>Underlined<span class="ct">&lt;/u&gt;</span>   <span class="cc">→ Underlined text</span>
+<span class="ct">&lt;i&gt;</span>Italic<span class="ct">&lt;/i&gt;</span>       <span class="cc">→ Italic text</span></div>
+      <div class="preview-box">
+        <div class="preview-label">🔍 Output</div>
+        H<sub>2</sub>O &nbsp;|&nbsp; x<sup>2</sup> &nbsp;|&nbsp; <u>Underline</u> &nbsp;|&nbsp; <i>Italic</i>
+      </div>
+    `
+  },
+  {
+    id:'html-input',
+    title:'Input Tag',
+    icon:'⌨️',
+    content:`
+      <div class="content-topic-title html-col">Input Tag</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span></div>
+      <div class="explanation">The <strong>&lt;input&gt;</strong> tag is an <em>empty tag</em> used inside forms. The <strong>type</strong> attribute controls what kind of input it is.</div>
+      <table class="info-table">
+        <tr><th>Type</th><th>What it shows</th></tr>
+        <tr><td class="attr-cell">text</td><td class="desc-cell">Single line text box</td></tr>
+        <tr><td class="attr-cell">password</td><td class="desc-cell">Hides characters</td></tr>
+        <tr><td class="attr-cell">radio</td><td class="desc-cell">Choose one option (circle button)</td></tr>
+        <tr><td class="attr-cell">checkbox</td><td class="desc-cell">Check one or more (square box)</td></tr>
+        <tr><td class="attr-cell">submit</td><td class="desc-cell">Submit button</td></tr>
+        <tr><td class="attr-cell">reset</td><td class="desc-cell">Clears the form</td></tr>
+        <tr><td class="attr-cell">button</td><td class="desc-cell">Clickable button</td></tr>
+        <tr><td class="attr-cell">file</td><td class="desc-cell">Upload a file</td></tr>
+      </table>
+      <div class="code-block-label">Examples</div>
+      <div class="code-block">
+<span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"text"</span> <span class="ca">placeholder</span>=<span class="cv">"Enter name"</span><span class="ct">&gt;</span>
+<span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"password"</span> <span class="ca">name</span>=<span class="cv">"pass"</span><span class="ct">&gt;</span>
+<span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"radio"</span> <span class="ca">name</span>=<span class="cv">"gender"</span><span class="ct">&gt;</span> Male</div>
+    `
+  },
+  {
+    id:'html-colors',
+    title:'Basic Colour Codes',
+    icon:'🌈',
+    content:`
+      <div class="content-topic-title html-col">Basic Colour Codes</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span></div>
+      <div class="explanation">Colors in HTML can be written in <strong>3 ways</strong>:</div>
+      <table class="info-table">
+        <tr><th>Type</th><th>Example</th><th>Meaning</th></tr>
+        <tr><td>Color Name</td><td class="tag-cell">red, blue, green</td><td class="desc-cell">Simple English names</td></tr>
+        <tr><td>Hex Code</td><td class="tag-cell">#FF0000</td><td class="desc-cell"># + 6 hex digits (RRGGBB)</td></tr>
+        <tr><td>RGB</td><td class="tag-cell">rgb(255,0,0)</td><td class="desc-cell">Red, Green, Blue (0-255)</td></tr>
+      </table>
+      <div class="color-grid">
+        <div class="swatch"><div class="swatch-box" style="background:#FF0000"></div><div class="swatch-name">#FF0000<br>Red</div></div>
+        <div class="swatch"><div class="swatch-box" style="background:#00FF00"></div><div class="swatch-name">#00FF00<br>Green</div></div>
+        <div class="swatch"><div class="swatch-box" style="background:#0000FF"></div><div class="swatch-name">#0000FF<br>Blue</div></div>
+        <div class="swatch"><div class="swatch-box" style="background:#FFFF00"></div><div class="swatch-name">#FFFF00<br>Yellow</div></div>
+        <div class="swatch"><div class="swatch-box" style="background:#FF00FF"></div><div class="swatch-name">#FF00FF<br>Magenta</div></div>
+        <div class="swatch"><div class="swatch-box" style="background:#00FFFF"></div><div class="swatch-name">#00FFFF<br>Cyan</div></div>
+        <div class="swatch"><div class="swatch-box" style="background:#000000;border:1px solid #555"></div><div class="swatch-name">#000000<br>Black</div></div>
+        <div class="swatch"><div class="swatch-box" style="background:#FFFFFF;border:1px solid #ccc"></div><div class="swatch-name">#FFFFFF<br>White</div></div>
+      </div>
+      <div class="code-block"><span class="ct">&lt;font</span> <span class="ca">color</span>=<span class="cv">"red"</span><span class="ct">&gt;</span>Red Text<span class="ct">&lt;/font&gt;</span>
+<span class="ct">&lt;font</span> <span class="ca">color</span>=<span class="cv">"#FF6B35"</span><span class="ct">&gt;</span>Orange Text<span class="ct">&lt;/font&gt;</span></div>
+    `
+  },
+  {
+    id:'html-marquee',
+    title:'Marquee Tag',
+    icon:'📺',
+    content:`
+      <div class="content-topic-title html-col">Marquee Tag</div>
+      <div class="content-source"><span class="source-badge">GRADE 9 BOOK</span></div>
+      <div class="explanation">The <strong>&lt;marquee&gt;</strong> tag makes text <em>scroll automatically</em> on the screen. It was popular in old websites!</div>
+      <div class="code-block"><span class="ct">&lt;marquee&gt;</span>I scroll automatically!<span class="ct">&lt;/marquee&gt;</span>
+
+<span class="ct">&lt;marquee</span> <span class="ca">direction</span>=<span class="cv">"right"</span> <span class="ca">behavior</span>=<span class="cv">"bounce"</span> <span class="ca">bgcolor</span>=<span class="cv">"yellow"</span><span class="ct">&gt;</span>
+  Bouncing text!
+<span class="ct">&lt;/marquee&gt;</span></div>
+      <div class="preview-box">
+        <div class="preview-label">🔍 Browser Output</div>
+        <marquee style="color:#ff6b35;font-weight:bold;">⚡ I scroll automatically! ⚡</marquee>
+      </div>
+      <table class="info-table">
+        <tr><th>Attribute</th><th>Values</th><th>Effect</th></tr>
+        <tr><td class="attr-cell">direction</td><td>left, right, up, down</td><td class="desc-cell">Scroll direction</td></tr>
+        <tr><td class="attr-cell">behavior</td><td>scroll, slide, bounce</td><td class="desc-cell">How it moves</td></tr>
+        <tr><td class="attr-cell">scrollamount</td><td>number (e.g. 5)</td><td class="desc-cell">Speed of scrolling</td></tr>
+        <tr><td class="attr-cell">bgcolor</td><td>color name or hex</td><td class="desc-cell">Background color</td></tr>
+        <tr><td class="attr-cell">width/height</td><td>pixels or %</td><td class="desc-cell">Size of marquee area</td></tr>
+      </table>
+    `
+  },
+  {
+    id:'html-anchor',
+    title:'Anchor Tag &lt;a&gt;',
+    icon:'🔗',
+    content:`
+      <div class="content-topic-title html-col">Anchor Tag &lt;a&gt;</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">The <strong>&lt;a&gt;</strong> tag creates <em>hyperlinks</em> — clickable links to other pages, websites, or files.</div>
+      <div class="code-block">
+<span class="cc"><!-- Link to external site --></span>
+<span class="ct">&lt;a</span> <span class="ca">href</span>=<span class="cv">"https://google.com"</span><span class="ct">&gt;</span>Go to Google<span class="ct">&lt;/a&gt;</span>
+
+<span class="cc"><!-- Open in new tab --></span>
+<span class="ct">&lt;a</span> <span class="ca">href</span>=<span class="cv">"page.html"</span> <span class="ca">target</span>=<span class="cv">"_blank"</span><span class="ct">&gt;</span>New Tab<span class="ct">&lt;/a&gt;</span>
+
+<span class="cc"><!-- Email link --></span>
+<span class="ct">&lt;a</span> <span class="ca">href</span>=<span class="cv">"mailto:me@email.com"</span><span class="ct">&gt;</span>Email Me<span class="ct">&lt;/a&gt;</span>
+
+<span class="cc"><!-- Anchor within same page --></span>
+<span class="ct">&lt;a</span> <span class="ca">href</span>=<span class="cv">"#section2"</span><span class="ct">&gt;</span>Jump to Section 2<span class="ct">&lt;/a&gt;</span></div>
+      <table class="info-table">
+        <tr><th>Attribute</th><th>Values</th><th>Purpose</th></tr>
+        <tr><td class="attr-cell">href</td><td>URL, #id, mailto:</td><td class="desc-cell">Destination of link</td></tr>
+        <tr><td class="attr-cell">target</td><td>_blank, _self, _parent</td><td class="desc-cell">Where to open link</td></tr>
+        <tr><td class="attr-cell">title</td><td>any text</td><td class="desc-cell">Tooltip on hover</td></tr>
+        <tr><td class="attr-cell">name</td><td>any text</td><td class="desc-cell">Creates an anchor bookmark</td></tr>
+      </table>
+    `
+  },
+  {
+    id:'html-lists',
+    title:'Lists (ol & ul)',
+    icon:'📋',
+    content:`
+      <div class="content-topic-title html-col">HTML Lists</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="code-block-label">Unordered List &lt;ul&gt; — Bullet Points</div>
+      <div class="code-block"><span class="ct">&lt;ul</span> <span class="ca">type</span>=<span class="cv">"disc"</span><span class="ct">&gt;</span>  <span class="cc">← disc / circle / square</span>
+  <span class="ct">&lt;li&gt;</span>HTML<span class="ct">&lt;/li&gt;</span>
+  <span class="ct">&lt;li&gt;</span>CSS<span class="ct">&lt;/li&gt;</span>
+  <span class="ct">&lt;li&gt;</span>JavaScript<span class="ct">&lt;/li&gt;</span>
+<span class="ct">&lt;/ul&gt;</span></div>
+      <div class="code-block-label">Ordered List &lt;ol&gt; — Numbered</div>
+      <div class="code-block"><span class="ct">&lt;ol</span> <span class="ca">type</span>=<span class="cv">"1"</span> <span class="ca">start</span>=<span class="cv">"1"</span><span class="ct">&gt;</span>  <span class="cc">← 1, A, a, I, i</span>
+  <span class="ct">&lt;li&gt;</span>First item<span class="ct">&lt;/li&gt;</span>
+  <span class="ct">&lt;li&gt;</span>Second item<span class="ct">&lt;/li&gt;</span>
+<span class="ct">&lt;/ol&gt;</span></div>
+      <div class="preview-box">
+        <div class="preview-label">🔍 Output</div>
+        <div style="display:flex;gap:2rem;flex-wrap:wrap;">
+          <div><strong>UL:</strong><ul style="margin:0.3rem 0 0 1.2rem"><li>HTML</li><li>CSS</li></ul></div>
+          <div><strong>OL:</strong><ol style="margin:0.3rem 0 0 1.2rem"><li>First</li><li>Second</li></ol></div>
+        </div>
+      </div>
+      <table class="info-table">
+        <tr><th>ul type</th><th>ol type</th></tr>
+        <tr><td class="tag-cell">disc (●), circle (○), square (■)</td><td class="tag-cell">1, A, a, I (Roman), i</td></tr>
+      </table>
+    `
+  },
+  {
+    id:'html-img',
+    title:'Image Tag &lt;img&gt;',
+    icon:'🖼️',
+    content:`
+      <div class="content-topic-title html-col">Image Tag &lt;img&gt;</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">The <strong>&lt;img&gt;</strong> tag is an <em>empty tag</em> that displays an image. The <strong>src</strong> attribute points to the image file.</div>
+      <div class="code-block"><span class="ct">&lt;img</span> <span class="ca">src</span>=<span class="cv">"photo.jpg"</span> <span class="ca">alt</span>=<span class="cv">"A photo"</span> <span class="ca">width</span>=<span class="cv">"300"</span> <span class="ca">height</span>=<span class="cv">"200"</span><span class="ct">&gt;</span></div>
+      <table class="info-table">
+        <tr><th>Attribute</th><th>Purpose</th></tr>
+        <tr><td class="attr-cell">src</td><td class="desc-cell">Path to image file (required)</td></tr>
+        <tr><td class="attr-cell">alt</td><td class="desc-cell">Alternate text if image doesn't load (required!)</td></tr>
+        <tr><td class="attr-cell">width</td><td class="desc-cell">Width in pixels or %</td></tr>
+        <tr><td class="attr-cell">height</td><td class="desc-cell">Height in pixels or %</td></tr>
+        <tr><td class="attr-cell">align</td><td class="desc-cell">left / right / middle / top / bottom</td></tr>
+        <tr><td class="attr-cell">border</td><td class="desc-cell">Border thickness in px</td></tr>
+        <tr><td class="attr-cell">title</td><td class="desc-cell">Tooltip when hovering</td></tr>
+      </table>
+      <div class="fact-box"><div class="fact-icon">💡</div><div class="fact-text">Always include <strong>alt</strong> attribute — it helps people who can't see images (screen readers) and shows when the image fails to load.</div></div>
+    `
+  },
+  {
+    id:'html-tables',
+    title:'Tables (all tags)',
+    icon:'📊',
+    content:`
+      <div class="content-topic-title html-col">HTML Tables</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="code-block">
+<span class="ct">&lt;table</span> <span class="ca">border</span>=<span class="cv">"1"</span> <span class="ca">width</span>=<span class="cv">"100%"</span> <span class="ca">cellpadding</span>=<span class="cv">"5"</span><span class="ct">&gt;</span>
+  <span class="ct">&lt;caption&gt;</span>My Table Title<span class="ct">&lt;/caption&gt;</span>
+  <span class="ct">&lt;tr&gt;</span>                <span class="cc">← Table Row</span>
+    <span class="ct">&lt;th&gt;</span>Name<span class="ct">&lt;/th&gt;</span>     <span class="cc">← Header Cell (bold)</span>
+    <span class="ct">&lt;th&gt;</span>Age<span class="ct">&lt;/th&gt;</span>
+  <span class="ct">&lt;/tr&gt;</span>
+  <span class="ct">&lt;tr&gt;</span>
+    <span class="ct">&lt;td&gt;</span>Kaustup<span class="ct">&lt;/td&gt;</span>  <span class="cc">← Data Cell</span>
+    <span class="ct">&lt;td&gt;</span>14<span class="ct">&lt;/td&gt;</span>
+  <span class="ct">&lt;/tr&gt;</span>
+<span class="ct">&lt;/table&gt;</span></div>
+      <table class="info-table">
+        <tr><th>Tag</th><th>Purpose</th></tr>
+        <tr><td class="tag-cell">&lt;table&gt;</td><td class="desc-cell">Container for the whole table</td></tr>
+        <tr><td class="tag-cell">&lt;caption&gt;</td><td class="desc-cell">Title above the table</td></tr>
+        <tr><td class="tag-cell">&lt;tr&gt;</td><td class="desc-cell">Table Row</td></tr>
+        <tr><td class="tag-cell">&lt;th&gt;</td><td class="desc-cell">Table Header cell (bold, centered)</td></tr>
+        <tr><td class="tag-cell">&lt;td&gt;</td><td class="desc-cell">Table Data cell</td></tr>
+      </table>
+      <table class="info-table">
+        <tr><th>Attribute</th><th>Used On</th><th>Effect</th></tr>
+        <tr><td class="attr-cell">border</td><td>&lt;table&gt;</td><td class="desc-cell">Border thickness</td></tr>
+        <tr><td class="attr-cell">cellpadding</td><td>&lt;table&gt;</td><td class="desc-cell">Space inside cells</td></tr>
+        <tr><td class="attr-cell">cellspacing</td><td>&lt;table&gt;</td><td class="desc-cell">Space between cells</td></tr>
+        <tr><td class="attr-cell">bgcolor</td><td>&lt;table&gt;/&lt;tr&gt;/&lt;td&gt;</td><td class="desc-cell">Background color</td></tr>
+        <tr><td class="attr-cell">align</td><td>most tags</td><td class="desc-cell">Alignment</td></tr>
+      </table>
+    `
+  },
+  {
+    id:'html-colspan',
+    title:'Colspan & Rowspan',
+    icon:'🔀',
+    content:`
+      <div class="content-topic-title html-col">Colspan & Rowspan</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation"><strong>colspan</strong> merges cells <em>horizontally</em> (across columns). <strong>rowspan</strong> merges cells <em>vertically</em> (across rows).</div>
+      <div class="code-block">
+<span class="cc"><!-- colspan: merge 2 columns --></span>
+<span class="ct">&lt;td</span> <span class="ca">colspan</span>=<span class="cv">"2"</span><span class="ct">&gt;</span>This spans 2 columns<span class="ct">&lt;/td&gt;</span>
+
+<span class="cc"><!-- rowspan: merge 2 rows --></span>
+<span class="ct">&lt;td</span> <span class="ca">rowspan</span>=<span class="cv">"2"</span><span class="ct">&gt;</span>This spans 2 rows<span class="ct">&lt;/td&gt;</span></div>
+      <div class="preview-box">
+        <div class="preview-label">🔍 Colspan Demo</div>
+        <table border="1" cellpadding="5" style="font-size:0.8rem;border-collapse:collapse;width:100%">
+          <tr><td colspan="2" style="background:#ffe0cc;text-align:center">Merged (colspan=2)</td></tr>
+          <tr><td>Cell 1</td><td>Cell 2</td></tr>
+        </table>
+      </div>
+      <div class="fact-box"><div class="fact-icon">🧠</div><div class="fact-text">When you use <strong>colspan="2"</strong>, you must remove one &lt;td&gt; from that row. Same for rowspan in following rows!</div></div>
+    `
+  },
+  {
+    id:'html-forms',
+    title:'Forms (Full)',
+    icon:'📋',
+    content:`
+      <div class="content-topic-title html-col">HTML Forms</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">Forms collect user input. The <strong>&lt;form&gt;</strong> tag wraps all form elements.</div>
+      <div class="code-block">
+<span class="ct">&lt;form</span> <span class="ca">action</span>=<span class="cv">"submit.php"</span> <span class="ca">method</span>=<span class="cv">"post"</span><span class="ct">&gt;</span>
+
+  <span class="cc"><!-- Text field --></span>
+  Name: <span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"text"</span> <span class="ca">name</span>=<span class="cv">"username"</span><span class="ct">&gt;</span>
+
+  <span class="cc"><!-- Password --></span>
+  Pass: <span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"password"</span> <span class="ca">name</span>=<span class="cv">"pass"</span><span class="ct">&gt;</span>
+
+  <span class="cc"><!-- Textarea --></span>
+  Message: <span class="ct">&lt;textarea</span> <span class="ca">rows</span>=<span class="cv">"4"</span> <span class="ca">cols</span>=<span class="cv">"30"</span><span class="ct">&gt;&lt;/textarea&gt;</span>
+
+  <span class="cc"><!-- Radio buttons --></span>
+  Gender: <span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"radio"</span> <span class="ca">name</span>=<span class="cv">"gender"</span> <span class="ca">value</span>=<span class="cv">"male"</span><span class="ct">&gt;</span>Male
+          <span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"radio"</span> <span class="ca">name</span>=<span class="cv">"gender"</span> <span class="ca">value</span>=<span class="cv">"female"</span><span class="ct">&gt;</span>Female
+
+  <span class="cc"><!-- Checkboxes --></span>
+  Hobbies: <span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"checkbox"</span> <span class="ca">name</span>=<span class="cv">"chess"</span><span class="ct">&gt;</span>Chess
+           <span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"checkbox"</span> <span class="ca">name</span>=<span class="cv">"coding"</span><span class="ct">&gt;</span>Coding
+
+  <span class="cc"><!-- Select / Dropdown --></span>
+  Country: <span class="ct">&lt;select</span> <span class="ca">name</span>=<span class="cv">"country"</span><span class="ct">&gt;</span>
+    <span class="ct">&lt;option</span> <span class="ca">value</span>=<span class="cv">"np"</span><span class="ct">&gt;</span>Nepal<span class="ct">&lt;/option&gt;</span>
+    <span class="ct">&lt;option</span> <span class="ca">value</span>=<span class="cv">"in"</span><span class="ct">&gt;</span>India<span class="ct">&lt;/option&gt;</span>
+  <span class="ct">&lt;/select&gt;</span>
+
+  <span class="cc"><!-- Buttons --></span>
+  <span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"submit"</span> <span class="ca">value</span>=<span class="cv">"Submit"</span><span class="ct">&gt;</span>
+  <span class="ct">&lt;input</span> <span class="ca">type</span>=<span class="cv">"reset"</span> <span class="ca">value</span>=<span class="cv">"Reset"</span><span class="ct">&gt;</span>
+
+<span class="ct">&lt;/form&gt;</span></div>
+      <div class="fact-box"><div class="fact-icon">💡</div><div class="fact-text">Radio buttons in the same group must have the <strong>same name</strong>. Checkboxes can have different names since you can pick multiple!</div></div>
+    `
+  },
+  {
+    id:'html-div',
+    title:'Div Tag',
+    icon:'📦',
+    content:`
+      <div class="content-topic-title html-col">The &lt;div&gt; Tag</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">The <strong>&lt;div&gt;</strong> tag is a <em>block-level container</em>. It groups other HTML elements together so you can style or arrange them as a unit. <strong>div = division</strong>.</div>
+      <div class="code-block">
+<span class="ct">&lt;div</span> <span class="ca">style</span>=<span class="cv">"background:lightblue; padding:10px;"</span><span class="ct">&gt;</span>
+  <span class="ct">&lt;h2&gt;</span>I'm inside a div!<span class="ct">&lt;/h2&gt;</span>
+  <span class="ct">&lt;p&gt;</span>Divs are like boxes 📦<span class="ct">&lt;/p&gt;</span>
+<span class="ct">&lt;/div&gt;</span>
+
+<span class="ct">&lt;div</span> <span class="ca">id</span>=<span class="cv">"header"</span><span class="ct">&gt;</span>Page Header<span class="ct">&lt;/div&gt;</span>
+<span class="ct">&lt;div</span> <span class="ca">class</span>=<span class="cv">"content"</span><span class="ct">&gt;</span>Main content<span class="ct">&lt;/div&gt;</span>
+<span class="ct">&lt;div</span> <span class="ca">id</span>=<span class="cv">"footer"</span><span class="ct">&gt;</span>Footer<span class="ct">&lt;/div&gt;</span></div>
+      <div class="preview-box">
+        <div class="preview-label">🔍 Output</div>
+        <div style="background:lightblue;padding:10px;border-radius:6px;font-size:0.85rem;color:#333">
+          <strong>I'm inside a div!</strong><br>Divs are like boxes 📦
+        </div>
+      </div>
+      <div class="fact-box"><div class="fact-icon">🧠</div><div class="fact-text">&lt;div&gt; by itself does nothing special. It becomes powerful when you add <strong>CSS styling</strong> to it! It's the most used tag in modern web design.</div></div>
+    `
+  }
+];
+
+const cssTopics = [
+  {
+    id:'css-intro',
+    title:'What is CSS?',
+    icon:'🎨',
+    content:`
+      <div class="content-topic-title css-col">What is CSS?</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">
+        <strong>CSS</strong> stands for <em>Cascading Style Sheets</em>. It is used to <strong>style and layout</strong> HTML web pages — like colors, fonts, spacing, and positioning.<br><br>
+        🎨 If HTML is the skeleton, CSS is the <strong>clothing and makeup</strong>!
+      </div>
+      <div class="code-block-label">Basic CSS Syntax</div>
+      <div class="code-block">
+<span class="cc">/* selector { property: value; } */</span>
+<span class="cp">h1</span> {
+  <span class="ca">color</span>: <span class="cv">red</span>;
+  <span class="ca">font-size</span>: <span class="cv">24px</span>;
+  <span class="ca">text-align</span>: <span class="cv">center</span>;
+}</div>
+      <div class="fact-box"><div class="fact-icon">💡</div><div class="fact-text">CSS was created by <strong>Håkon Wium Lie</strong> in 1994. The word <strong>"Cascading"</strong> means styles flow down from parent to child elements.</div></div>
+    `
+  },
+  {
+    id:'css-types',
+    title:'Types of CSS',
+    icon:'📂',
+    content:`
+      <div class="content-topic-title css-col">Types of CSS</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <table class="info-table">
+        <tr><th>Type</th><th>Where Written</th><th>Priority</th></tr>
+        <tr><td style="color:var(--html)">Inline CSS</td><td class="desc-cell">Inside the HTML tag (style attribute)</td><td class="desc-cell">Highest</td></tr>
+        <tr><td style="color:var(--gold)">Internal CSS</td><td class="desc-cell">In &lt;style&gt; tag inside &lt;head&gt;</td><td class="desc-cell">Medium</td></tr>
+        <tr><td style="color:var(--css)">External CSS</td><td class="desc-cell">Separate .css file linked with &lt;link&gt;</td><td class="desc-cell">Lowest (but best practice!)</td></tr>
+      </table>
+      <div class="code-block-label">1. Inline CSS</div>
+      <div class="code-block"><span class="ct">&lt;p</span> <span class="ca">style</span>=<span class="cv">"color:red; font-size:20px;"</span><span class="ct">&gt;</span>Red text<span class="ct">&lt;/p&gt;</span></div>
+      <div class="code-block-label">2. Internal CSS (in head)</div>
+      <div class="code-block"><span class="ct">&lt;style&gt;</span>
+  <span class="cp">p</span> { <span class="ca">color</span>: <span class="cv">blue</span>; }
+<span class="ct">&lt;/style&gt;</span></div>
+      <div class="code-block-label">3. External CSS (recommended!)</div>
+      <div class="code-block"><span class="ct">&lt;link</span> <span class="ca">rel</span>=<span class="cv">"stylesheet"</span> <span class="ca">href</span>=<span class="cv">"style.css"</span><span class="ct">&gt;</span></div>
+      <div class="fact-box"><div class="fact-icon">⭐</div><div class="fact-text">External CSS is the <strong>best practice</strong> because one .css file can style many pages at once. Change the file → all pages update!</div></div>
+    `
+  },
+  {
+    id:'css-selectors',
+    title:'Selectors & Types',
+    icon:'🎯',
+    content:`
+      <div class="content-topic-title css-col">CSS Selectors</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">A <strong>selector</strong> targets the HTML element you want to style.</div>
+      <table class="info-table">
+        <tr><th>Selector</th><th>Syntax</th><th>Targets</th></tr>
+        <tr><td>Universal</td><td class="tag-cell">*</td><td class="desc-cell">ALL elements</td></tr>
+        <tr><td>Element</td><td class="tag-cell">p, h1, div</td><td class="desc-cell">All &lt;p&gt; or &lt;h1&gt; etc.</td></tr>
+        <tr><td>Class</td><td class="tag-cell">.classname</td><td class="desc-cell">Elements with that class (reusable)</td></tr>
+        <tr><td>ID</td><td class="tag-cell">#idname</td><td class="desc-cell">ONE specific element (unique)</td></tr>
+        <tr><td>Descendant</td><td class="tag-cell">div p</td><td class="desc-cell">&lt;p&gt; inside a &lt;div&gt;</td></tr>
+        <tr><td>Grouping</td><td class="tag-cell">h1, h2, p</td><td class="desc-cell">Multiple elements, same style</td></tr>
+      </table>
+      <div class="code-block">
+<span class="cp">*</span>       { <span class="ca">margin</span>: <span class="cv">0</span>; }              <span class="cc">/* all elements */</span>
+<span class="cp">p</span>       { <span class="ca">color</span>: <span class="cv">blue</span>; }          <span class="cc">/* element */</span>
+<span class="cp">.box</span>    { <span class="ca">background</span>: <span class="cv">red</span>; }      <span class="cc">/* class */</span>
+<span class="cp">#header</span> { <span class="ca">font-size</span>: <span class="cv">2rem</span>; }     <span class="cc">/* id */</span>
+<span class="cp">div p</span>   { <span class="ca">color</span>: <span class="cv">green</span>; }         <span class="cc">/* descendant */</span>
+<span class="cp">h1, h2</span>  { <span class="ca">font-family</span>: <span class="cv">Arial</span>; }  <span class="cc">/* grouping */</span></div>
+    `
+  },
+  {
+    id:'css-properties',
+    title:'CSS Properties',
+    icon:'🔧',
+    content:`
+      <div class="content-topic-title css-col">Common CSS Properties</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="code-block">
+<span class="cp">p</span> {
+  <span class="cc">/* TEXT */</span>
+  <span class="ca">color</span>: <span class="cv">red</span>;               <span class="cc">/* text color */</span>
+  <span class="ca">font-size</span>: <span class="cv">16px</span>;          <span class="cc">/* text size */</span>
+  <span class="ca">font-family</span>: <span class="cv">Arial</span>;        <span class="cc">/* font type */</span>
+  <span class="ca">font-weight</span>: <span class="cv">bold</span>;         <span class="cc">/* bold/normal */</span>
+  <span class="ca">text-align</span>: <span class="cv">center</span>;       <span class="cc">/* alignment */</span>
+  <span class="ca">text-decoration</span>: <span class="cv">underline</span>; <span class="cc">/* underline */</span>
+
+  <span class="cc">/* BACKGROUND */</span>
+  <span class="ca">background-color</span>: <span class="cv">yellow</span>;  <span class="cc">/* bg color */</span>
+  <span class="ca">background-image</span>: <span class="cv">url(bg.jpg)</span>;
+
+  <span class="cc">/* SIZING */</span>
+  <span class="ca">width</span>: <span class="cv">300px</span>;
+  <span class="ca">height</span>: <span class="cv">200px</span>;
+
+  <span class="cc">/* SPACING */</span>
+  <span class="ca">margin</span>: <span class="cv">10px</span>;              <span class="cc">/* outside space */</span>
+  <span class="ca">padding</span>: <span class="cv">15px</span>;             <span class="cc">/* inside space */</span>
+
+  <span class="cc">/* BORDER */</span>
+  <span class="ca">border</span>: <span class="cv">2px solid black</span>;
+  <span class="ca">border-radius</span>: <span class="cv">10px</span>;
+}</div>
+    `
+  },
+  {
+    id:'css-box-model',
+    title:'CSS Box Model',
+    icon:'📦',
+    content:`
+      <div class="content-topic-title css-col">CSS Box Model</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">Every HTML element is a <strong>rectangular box</strong>. The Box Model describes the layers around it.</div>
+      <div style="text-align:center;margin:1rem 0;padding:1rem;background:#0a0912;border-radius:10px;">
+        <div style="background:rgba(0,201,167,0.15);border:2px dashed var(--css);padding:8px;border-radius:8px;font-size:0.7rem;color:var(--css);">MARGIN (outside space)
+          <div style="background:rgba(255,214,10,0.15);border:2px dashed var(--gold);padding:8px;border-radius:6px;margin-top:8px;color:var(--gold);">BORDER
+            <div style="background:rgba(255,107,53,0.15);border:2px dashed var(--html);padding:8px;border-radius:4px;margin-top:8px;color:var(--html);">PADDING (inside space)
+              <div style="background:rgba(77,171,247,0.2);border:2px solid var(--blue);padding:12px;border-radius:3px;margin-top:8px;color:var(--blue);font-weight:700;">CONTENT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">
+<span class="cp">div</span> {
+  <span class="ca">width</span>: <span class="cv">200px</span>;           <span class="cc">← content width</span>
+  <span class="ca">padding</span>: <span class="cv">20px</span>;          <span class="cc">← inside space</span>
+  <span class="ca">border</span>: <span class="cv">5px solid red</span>;  <span class="cc">← border</span>
+  <span class="ca">margin</span>: <span class="cv">10px</span>;           <span class="cc">← outside space</span>
+  <span class="cc">/* Total width = 200+20+20+5+5 = 250px */</span>
+}</div>
+      <div class="fact-box"><div class="fact-icon">💡</div><div class="fact-text">Tip: Use <strong>box-sizing: border-box</strong> so padding and border are included in the width — makes sizing much easier!</div></div>
+    `
+  },
+  {
+    id:'css-units',
+    title:'CSS Measurement Units',
+    icon:'📏',
+    content:`
+      <div class="content-topic-title css-col">CSS Measurement Units</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <table class="info-table">
+        <tr><th>Unit</th><th>Type</th><th>What it means</th><th>Example</th></tr>
+        <tr><td class="tag-cell">px</td><td>Absolute</td><td class="desc-cell">Pixels — fixed size on screen</td><td class="attr-cell">font-size: 16px</td></tr>
+        <tr><td class="tag-cell">%</td><td>Relative</td><td class="desc-cell">Percentage of parent element</td><td class="attr-cell">width: 50%</td></tr>
+        <tr><td class="tag-cell">em</td><td>Relative</td><td class="desc-cell">Relative to parent font-size</td><td class="attr-cell">padding: 1em</td></tr>
+        <tr><td class="tag-cell">rem</td><td>Relative</td><td class="desc-cell">Relative to root (html) font-size</td><td class="attr-cell">font-size: 1.2rem</td></tr>
+        <tr><td class="tag-cell">vw</td><td>Relative</td><td class="desc-cell">1% of viewport width</td><td class="attr-cell">width: 100vw</td></tr>
+        <tr><td class="tag-cell">vh</td><td>Relative</td><td class="desc-cell">1% of viewport height</td><td class="attr-cell">height: 100vh</td></tr>
+        <tr><td class="tag-cell">pt</td><td>Absolute</td><td class="desc-cell">Points (1pt = 1/72 inch)</td><td class="attr-cell">font-size: 12pt</td></tr>
+        <tr><td class="tag-cell">cm / mm</td><td>Absolute</td><td class="desc-cell">Centimeters / Millimeters</td><td class="attr-cell">width: 5cm</td></tr>
+      </table>
+      <div class="fact-box"><div class="fact-icon">🎯</div><div class="fact-text">For web design: use <strong>px</strong> for precise sizes, <strong>%</strong> for responsive layouts, and <strong>rem</strong> for consistent font sizes across the whole site.</div></div>
+    `
+  },
+  {
+    id:'css-basic-code',
+    title:'Basic CSS Code Examples',
+    icon:'💻',
+    content:`
+      <div class="content-topic-title css-col">Basic CSS Code</div>
+      <div class="content-source"><span class="source-badge">W3SCHOOLS</span> + Grade 9</div>
+      <div class="explanation">Here are practical CSS examples as per your Grade 9 book curriculum:</div>
+      <div class="code-block-label">style.css — Full Beginner Example</div>
+      <div class="code-block">
+<span class="cc">/* Reset */</span>
+<span class="cp">*</span> {
+  <span class="ca">margin</span>: <span class="cv">0</span>;
+  <span class="ca">padding</span>: <span class="cv">0</span>;
+  <span class="ca">box-sizing</span>: <span class="cv">border-box</span>;
+}
+
+<span class="cc">/* Body */</span>
+<span class="cp">body</span> {
+  <span class="ca">background-color</span>: <span class="cv">#f0f0f0</span>;
+  <span class="ca">font-family</span>: <span class="cv">Arial, sans-serif</span>;
+  <span class="ca">color</span>: <span class="cv">#333333</span>;
+}
+
+<span class="cc">/* Heading */</span>
+<span class="cp">h1</span> {
+  <span class="ca">color</span>: <span class="cv">#ff6b35</span>;
+  <span class="ca">text-align</span>: <span class="cv">center</span>;
+  <span class="ca">font-size</span>: <span class="cv">36px</span>;
+  <span class="ca">text-decoration</span>: <span class="cv">underline</span>;
+}
+
+<span class="cc">/* Paragraph */</span>
+<span class="cp">p</span> {
+  <span class="ca">font-size</span>: <span class="cv">16px</span>;
+  <span class="ca">line-height</span>: <span class="cv">1.6</span>;
+  <span class="ca">margin-bottom</span>: <span class="cv">10px</span>;
+  <span class="ca">color</span>: <span class="cv">#555</span>;
+}
+
+<span class="cc">/* Div box with border */</span>
+<span class="cp">.box</span> {
+  <span class="ca">width</span>: <span class="cv">300px</span>;
+  <span class="ca">height</span>: <span class="cv">150px</span>;
+  <span class="ca">background-color</span>: <span class="cv">lightblue</span>;
+  <span class="ca">border</span>: <span class="cv">2px solid navy</span>;
+  <span class="ca">padding</span>: <span class="cv">20px</span>;
+  <span class="ca">margin</span>: <span class="cv">10px auto</span>;
+}
+
+<span class="cc">/* Link styling */</span>
+<span class="cp">a</span> {
+  <span class="ca">color</span>: <span class="cv">blue</span>;
+  <span class="ca">text-decoration</span>: <span class="cv">none</span>;
+}
+<span class="cp">a:hover</span> {
+  <span class="ca">color</span>: <span class="cv">red</span>;
+  <span class="ca">text-decoration</span>: <span class="cv">underline</span>;
+}
+
+<span class="cc">/* Table styling */</span>
+<span class="cp">table</span> {
+  <span class="ca">border-collapse</span>: <span class="cv">collapse</span>;
+  <span class="ca">width</span>: <span class="cv">100%</span>;
+}
+<span class="cp">th, td</span> {
+  <span class="ca">border</span>: <span class="cv">1px solid black</span>;
+  <span class="ca">padding</span>: <span class="cv">8px</span>;
+  <span class="ca">text-align</span>: <span class="cv">left</span>;
+}
+<span class="cp">th</span> {
+  <span class="ca">background-color</span>: <span class="cv">#ff6b35</span>;
+  <span class="ca">color</span>: <span class="cv">white</span>;
+}
+
+<span class="cc">/* Form styling */</span>
+<span class="cp">input[type="text"]</span> {
+  <span class="ca">width</span>: <span class="cv">200px</span>;
+  <span class="ca">padding</span>: <span class="cv">8px</span>;
+  <span class="ca">border</span>: <span class="cv">1px solid #ccc</span>;
+  <span class="ca">border-radius</span>: <span class="cv">4px</span>;
+}
+<span class="cp">input[type="submit"]</span> {
+  <span class="ca">background-color</span>: <span class="cv">green</span>;
+  <span class="ca">color</span>: <span class="cv">white</span>;
+  <span class="ca">padding</span>: <span class="cv">10px 20px</span>;
+  <span class="ca">border</span>: <span class="cv">none</span>;
+  <span class="ca">cursor</span>: <span class="cv">pointer</span>;
+}
+      </div>
+    `
+  }
+];
+
+// ============================================================
+// QUIZ DATA
+// ============================================================
+const quizData = [
+  { q:"What does HTML stand for?", opts:["HyperText Markup Language","High Tech Modern Language","HyperText Modern Links","HyperTransfer Markup Language"], ans:0, sub:"html", exp:"HTML = HyperText Markup Language. It's the standard language for creating web pages!" },
+  { q:"Which tag is used to create a line break?", opts:["<lb>","<break>","<br>","<line>"], ans:2, sub:"html", exp:"<br> is an empty tag that creates a line break. No closing tag needed!" },
+  { q:"What does the 'alt' attribute do in an img tag?", opts:["Changes image size","Adds animation","Provides alternate text if image doesn't load","Changes image color"], ans:2, sub:"html", exp:"alt='text' provides alternative text for screen readers and when the image fails to load. Always include it!" },
+  { q:"What type of tag is <br>?", opts:["Container tag","Empty tag","Block tag","Style tag"], ans:1, sub:"html", exp:"<br> is an empty tag — it doesn't need a closing tag and has no content inside it." },
+  { q:"Which attribute makes text scroll in a marquee?", opts:["speed","scrollamount","velocity","rate"], ans:1, sub:"html", exp:"The scrollamount attribute controls the speed of scrolling in the <marquee> tag." },
+  { q:"What does colspan='2' do in a table?", opts:["Creates 2 rows","Merges 2 columns horizontally","Adds 2 borders","Sets table width to 2px"], ans:1, sub:"html", exp:"colspan merges cells HORIZONTALLY. colspan='2' makes a cell span across 2 columns." },
+  { q:"Which list type shows bullet points?", opts:["<ol>","<dl>","<ul>","<bl>"], ans:2, sub:"html", exp:"<ul> = Unordered List = bullet points. <ol> = Ordered List = numbers." },
+  { q:"What does target='_blank' do in an anchor tag?", opts:["Opens link in same tab","Opens link in new tab","Downloads the file","Creates a bookmark"], ans:1, sub:"html", exp:"target='_blank' opens the linked page in a NEW browser tab or window." },
+  { q:"CSS stands for?", opts:["Colorful Style Sheets","Cascading Style Sheets","Computer Style System","Creative Styling Syntax"], ans:1, sub:"css", exp:"CSS = Cascading Style Sheets. It controls the visual presentation of HTML pages." },
+  { q:"Which CSS selector targets elements with class 'box'?", opts:["#box","box","*box",".box"], ans:3, sub:"css", exp:"Classes are selected with a dot (.) prefix. .box targets all elements with class='box'." },
+  { q:"What is the CSS Box Model order from inside to outside?", opts:["Content → Margin → Padding → Border","Content → Padding → Border → Margin","Border → Content → Padding → Margin","Padding → Content → Border → Margin"], ans:1, sub:"css", exp:"Content → Padding → Border → Margin. Remember: 'Cool Programmers Build Masterpieces'" },
+  { q:"Which CSS property changes text color?", opts:["font-color","text-color","background","color"], ans:3, sub:"css", exp:"The 'color' property changes text color. background-color changes the background." },
+  { q:"What does 'margin' in CSS control?", opts:["Space inside the border","Space outside the border","The border thickness","The text spacing"], ans:1, sub:"css", exp:"Margin controls space OUTSIDE the border. Padding controls space INSIDE the border." },
+  { q:"Which type of CSS is considered best practice?", opts:["Inline CSS","Internal CSS","External CSS","All are equal"], ans:2, sub:"css", exp:"External CSS is best! One .css file can style many HTML pages at once." },
+  { q:"What does the CSS unit 'vh' stand for?", opts:["Vertical height","Viewport height","Very huge","Variable height"], ans:1, sub:"css", exp:"vh = Viewport Height. 100vh = full height of the browser window. Very useful for full-page layouts!" }
+];
+
+// ============================================================
+// CHAPTER NAVIGATION
+// ============================================================
+let currentChapter = 'html';
+let currentTopicIndex = 0;
+
+function openChapter(chapter) {
+  currentChapter = chapter;
+  currentTopicIndex = 0;
+  const topics = chapter === 'html' ? htmlTopics : cssTopics;
+  showScreen('screen-lesson');
+
+  const titleEl = document.getElementById('lessonTitle');
+  titleEl.textContent = chapter === 'html' ? '🌐 HTML' : '🎨 CSS';
+  titleEl.className = 'lesson-title ' + (chapter==='html' ? 'html-col' : 'css-col');
+
+  buildTopicList(topics, chapter);
+  loadTopic(0);
+}
+
+function buildTopicList(topics, chapter) {
+  const container = document.getElementById('topicListItems');
+  container.innerHTML = '';
+  topics.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'topic-item' + (chapter==='css'?' css-topic':'') + (done.includes(t.id)?' done':'');
+    div.id = 'ti-'+i;
+    div.innerHTML = `<span class="topic-num">${i+1}</span> ${t.icon} ${t.title}`;
+    div.onclick = () => loadTopic(i);
+    container.appendChild(div);
+  });
+}
+
+function loadTopic(index) {
+  currentTopicIndex = index;
+  const topics = currentChapter === 'html' ? htmlTopics : cssTopics;
+  const t = topics[index];
+  const isHtml = currentChapter === 'html';
+
+  // Update sidebar
+  document.querySelectorAll('.topic-item').forEach((el,i) => {
+    el.classList.toggle('active-topic', i===index);
+  });
+
+  // Build content
+  const col = isHtml ? 'html-col' : 'css-col';
+  const nextCol = isHtml ? 'next-html' : 'next-css';
+  const total = topics.length;
+
+  document.getElementById('lesson-content').innerHTML = `
+    ${t.content}
+    <div class="nav-btns">
+      ${index > 0 ? `<button class="nav-btn prev" onclick="loadTopic(${index-1})">← Prev</button>` : '<div></div>'}
+      ${index < total-1
+        ? `<button class="nav-btn ${nextCol}" onclick="markAndNext(${index})">Next →</button>`
+        : `<button class="nav-btn ${nextCol}" onclick="markAndQuiz(${index})">🏆 Go to Quiz!</button>`}
+    </div>
+  `;
+
+  // Scroll top
+  document.getElementById('lesson-content').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function markAndNext(index) {
+  const topics = currentChapter === 'html' ? htmlTopics : cssTopics;
+  const id = topics[index].id;
+  if(!done.includes(id)) {
+    done.push(id);
+    saveProgress();
+    addXP(10);
+    document.getElementById('ti-'+index).classList.add('done');
+  }
+  loadTopic(index+1);
+}
+
+function markAndQuiz(index) {
+  const topics = currentChapter === 'html' ? htmlTopics : cssTopics;
+  const id = topics[index].id;
+  if(!done.includes(id)) {
+    done.push(id);
+    saveProgress();
+    addXP(10);
+  }
+  openQuiz();
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+let quizQueue = [];
+let quizIndex = 0;
+let quizScore = 0;
+
+function openQuiz() {
+  showScreen('screen-quiz');
+  quizQueue = [...quizData].sort(()=>Math.random()-0.5);
+  quizIndex = 0;
+  quizScore = 0;
+  document.getElementById('scoreScreen').style.display='none';
+  document.getElementById('quizContainer').style.display='block';
+  showQuestion();
+}
+
+function showQuestion() {
+  document.getElementById('quizProgressText').textContent = `${quizIndex+1} / ${quizQueue.length}`;
+  const q = quizQueue[quizIndex];
+  const shuffled = q.opts.map((o,i)=>({text:o,correct:i===q.ans})).sort(()=>Math.random()-0.5);
+  document.getElementById('quizContainer').innerHTML = `
+    <div class="quiz-question-card">
+      <div class="q-subject-badge ${q.sub+'-b'}">${q.sub.toUpperCase()}</div>
+      <div class="quiz-q-text">${q.q}</div>
+      <div class="quiz-options">
+        ${shuffled.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(this,${o.correct},'${q.exp.replace(/'/g,"\\'")}',${quizIndex})">${o.text}</button>`).join('')}
+      </div>
+      <div class="quiz-explanation" id="qexp"></div>
+      <button class="quiz-next-btn" id="qnext" onclick="nextQuestion()">
+        ${quizIndex < quizQueue.length-1 ? 'Next Question →' : 'See My Score 🏆'}
+      </button>
+    </div>
+  `;
+}
+
+function answerQuiz(btn, correct, exp, idx) {
+  if(btn.disabled) return;
+  document.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  btn.classList.add(correct?'opt-correct':'opt-wrong');
+  if(!correct) document.querySelectorAll('.quiz-opt').forEach(b=>{ if(b.onclick.toString().includes('true')) b.classList.add('opt-correct'); });
+  document.getElementById('qexp').textContent = exp;
+  document.getElementById('qexp').style.display='block';
+  document.getElementById('qnext').style.display='block';
+  if(correct){ quizScore++; addXP(5); }
+}
+
+function nextQuestion() {
+  quizIndex++;
+  if(quizIndex < quizQueue.length) {
+    showQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function showScore() {
+  document.getElementById('quizContainer').style.display='none';
+  const ss = document.getElementById('scoreScreen');
+  ss.style.display='block';
+  const pct = quizScore/quizQueue.length;
+  const emoji = pct===1?'🏆':pct>=0.8?'🔥':pct>=0.6?'👍':'📚';
+  const msg = pct===1?'Perfect! You are a Web Dev master!':pct>=0.8?'Excellent work! Almost perfect!':pct>=0.6?'Good job! Keep practicing!':'Keep studying — you can do it!';
+  ss.innerHTML = `
+    <div class="score-big">${quizScore}/${quizQueue.length}</div>
+    <div style="font-size:3rem;margin:0.5rem 0">${emoji}</div>
+    <div class="score-msg">${msg}</div>
+    <div class="score-action-btns">
+      <button class="score-btn home-btn" onclick="goHome()">🏠 Home</button>
+      <button class="score-btn retry-btn" onclick="openQuiz()">🔄 Retry Quiz</button>
+    </div>
+  `;
+  if(pct>=0.8) launchConfetti();
+}
+
+function launchConfetti() {
+  const colors=['#ff6b35','#ffd60a','#00c9a7','#ff4d8d','#4dabf7','#69db7c'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.left=Math.random()*100+'vw';
+    el.style.top='-20px';
+    el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration=(2+Math.random()*2)+'s';
+    el.style.animationDelay=(Math.random()*1)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),(4000));
+  }
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goHome() {
+  showScreen('screen-home');
+  updateXPBar();
+}
+</script>
+</body>
+</html>
